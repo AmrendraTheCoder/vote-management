@@ -24,6 +24,7 @@
 - [ ] Ensure all required files are included
 
 **Git Setup Commands:**
+
 ```bash
 cd backend
 git init

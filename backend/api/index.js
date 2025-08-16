@@ -8,13 +8,12 @@ import rateLimit from "express-rate-limit";
 import process from "process";
 
 // Import routes
-import studentRoutes from "./routes/students.js";
+import studentRoutes from "../routes/students.js";
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5001;
 
 // Rate limiting
 const limiter = rateLimit({
@@ -54,7 +53,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/students", studentRoutes);
 
 // Global error handler
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   console.error("Error:", err);
   res.status(err.status || 500).json({
     success: false,
@@ -72,52 +71,48 @@ app.use("*", (req, res) => {
 });
 
 // Database connection
+let cachedDb = null;
+
 const connectDB = async () => {
+  if (cachedDb) {
+    return cachedDb;
+  }
+
   try {
     const mongoURI =
-      process.env.MONGODB_URI || "mongodb://localhost:27017/vote_manager";
+      process.env.MONGODB_URI ||
+      "mongodb://localhost:27017/vote_manager";
 
-    await mongoose.connect(mongoURI);
+    const conn = await mongoose.connect(mongoURI);
 
+    cachedDb = conn;
     console.log("✅ MongoDB Connected Successfully");
     console.log(`📊 Database: ${mongoose.connection.name}`);
+    return cachedDb;
   } catch (error) {
     console.error("❌ MongoDB Connection Error:", error.message);
-    process.exit(1);
+    throw error;
   }
 };
 
-// Start server
-const startServer = async () => {
-  try {
-    await connectDB();
+// Export for Vercel
+export default async function handler(req, res) {
+  await connectDB();
+  return app(req, res);
+}
 
+// For local development
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 5001;
+  
+  connectDB().then(() => {
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`🌐 API Base URL: http://localhost:${PORT}/api`);
       console.log(`📱 Environment: ${process.env.NODE_ENV || "development"}`);
     });
-  } catch (error) {
+  }).catch((error) => {
     console.error("Failed to start server:", error);
     process.exit(1);
-  }
-};
-
-// Graceful shutdown
-process.on("SIGTERM", () => {
-  console.log("SIGTERM received. Shutting down gracefully...");
-  mongoose.connection.close(() => {
-    console.log("MongoDB connection closed.");
-    process.exit(0);
   });
-});
-
-process.on("SIGINT", () => {
-  console.log("SIGINT received. Shutting down gracefully...");
-  mongoose.connection.close(() => {
-    console.log("MongoDB connection closed.");
-    process.exit(0);
-  });
-});
-
-startServer();
+}
