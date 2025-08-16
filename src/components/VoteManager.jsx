@@ -422,7 +422,6 @@ const VoteManager = () => {
                                         students={filteredAndSortedStudents}
                                         onEdit={handleEditStudent}
                                         onDelete={handleDeleteStudent}
-                                        onVoteChange={handleVoteChange}
                                         onMove={handleMoveStudent}
                                     />
                                 ) : (
