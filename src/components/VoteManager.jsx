@@ -519,87 +519,88 @@ const VoteManager = () => {
                     <div className="relative z-10">
                         {/* Top Bar */}
                         <div className="flex items-center justify-between mb-6">
+                            {/* Enhanced Menu Button with High Visibility */}
                             <button
                                 onClick={() => setIsMenuOpen(true)}
-                                className="p-3 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-xl transition-all duration-200 backdrop-blur-sm"
+                                className="p-3 bg-gray-900 bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all duration-200 backdrop-blur-sm border-2 border-white border-opacity-50 shadow-2xl"
                             >
-                                <Menu className="w-6 h-6 text-white" />
+                                <Menu className="w-7 h-7 text-white filter drop-shadow-lg" />
                             </button>
 
                             {/* Status Indicators */}
-                            <div className="flex items-center space-x-4">
-                                {/* Connection Status */}
-                                <div className="flex items-center space-x-2 bg-white bg-opacity-20 px-3 py-2 rounded-lg backdrop-blur-sm">
+                            <div className="flex items-center space-x-3">
+                                {/* Connection Status - Enhanced Visibility */}
+                                <div className="flex items-center space-x-2 bg-gray-900 bg-opacity-80 px-4 py-2 rounded-lg backdrop-blur-sm border-2 border-white border-opacity-50 shadow-xl">
                                     {isOnline ? (
                                         <>
-                                            <Wifi className="w-4 h-4 text-green-300" />
-                                            <span className="text-white text-sm font-medium">Online</span>
+                                            <Wifi className="w-5 h-5 text-green-400 filter drop-shadow-lg" />
+                                            <span className="text-white text-sm font-bold filter drop-shadow-lg">Connected</span>
                                         </>
                                     ) : (
                                         <>
-                                            <WifiOff className="w-4 h-4 text-red-300" />
-                                            <span className="text-white text-sm font-medium">Offline</span>
+                                            <WifiOff className="w-5 h-5 text-red-400 filter drop-shadow-lg" />
+                                            <span className="text-white text-sm font-bold filter drop-shadow-lg">Offline</span>
                                         </>
                                     )}
                                 </div>
 
-                                {/* Sync Button */}
+                                {/* Sync Button - Enhanced */}
                                 {isOnline && (
                                     <button
                                         onClick={syncData}
                                         disabled={syncing || loading}
-                                        className="p-3 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-xl transition-all duration-200 backdrop-blur-sm disabled:opacity-50"
+                                        className="p-3 bg-gray-900 bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all duration-200 backdrop-blur-sm disabled:opacity-50 border-2 border-white border-opacity-50 shadow-xl"
                                         title="Refresh Data"
                                     >
-                                        <RefreshCw className={`w-5 h-5 text-white ${syncing ? 'animate-spin' : ''}`} />
+                                        <RefreshCw className={`w-6 h-6 text-white filter drop-shadow-lg ${syncing ? 'animate-spin' : ''}`} />
                                     </button>
                                 )}
                             </div>
                         </div>
 
-                        {/* Title Section */}
+                        {/* Ultra High Contrast Title Section */}
                         <div className="text-center text-white mb-8">
-                            <h1 className="text-3xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                            <h1 className="text-4xl sm:text-6xl font-black mb-3 text-white" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.3)' }}>
                                 Vote Management
                             </h1>
-                            <p className="text-blue-100 text-lg">Track Support for Chirag Sir</p>
-                            <div className="mt-4 text-sm text-blue-200">
-                                Welcome back, <span className="font-semibold text-white">{localStorage.getItem('voteManagerUser') || 'User'}</span>
+                            <p className="text-white text-xl font-bold" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.8)' }}>Track Support for Chirag Sir</p>
+                            <div className="mt-4 text-base text-white">
+                                Welcome back, <span className="font-bold text-yellow-300" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>{localStorage.getItem('voteManagerUser') || 'User'}</span>
                             </div>
                         </div>
 
-                        {/* Stats Cards - Modern Glass Morphism Design */}
+                        {/* Stats Cards - High Contrast Glass Design */}
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                            <div className="bg-white bg-opacity-10 backdrop-blur-md p-4 rounded-xl border border-white border-opacity-20 hover:bg-opacity-20 transition-all duration-300 shadow-lg">
+                            <div className="bg-white bg-opacity-95 backdrop-blur-md p-4 rounded-xl border border-blue-200 hover:bg-opacity-100 transition-all duration-300 shadow-lg">
                                 <div className="flex items-center justify-center mb-2">
-                                    <Users className="w-6 h-6 text-white" />
+                                    <Users className="w-6 h-6 text-blue-600" />
                                 </div>
-                                <div className="text-2xl font-bold text-white">{stats?.total || 0}</div>
-                                <div className="text-sm text-blue-100">Total Students</div>
+                                <div className="text-2xl font-bold text-blue-700">{stats?.total || 0}</div>
+                                <div className="text-sm text-blue-600">Total Students</div>
                             </div>
 
-                            <div className="bg-white bg-opacity-10 backdrop-blur-md p-4 rounded-xl border border-white border-opacity-20 hover:bg-opacity-20 transition-all duration-300 shadow-lg">
+                            <div className="bg-white bg-opacity-95 backdrop-blur-md p-4 rounded-xl border border-green-200 hover:bg-opacity-100 transition-all duration-300 shadow-lg">
                                 <div className="flex items-center justify-center mb-2">
-                                    <CheckCircle className="w-6 h-6 text-green-300" />
+                                    <CheckCircle className="w-6 h-6 text-green-600" />
                                 </div>
-                                <div className="text-2xl font-bold text-green-300">{stats?.forChirag || 0}</div>
-                                <div className="text-sm text-green-200">Will Vote</div>
+                                <div className="text-2xl font-bold text-green-700">{stats?.forChirag || 0}</div>
+                                <div className="text-sm text-green-600">Will Vote</div>
                             </div>
 
-                            <div className="bg-white bg-opacity-10 backdrop-blur-md p-4 rounded-xl border border-white border-opacity-20 hover:bg-opacity-20 transition-all duration-300 shadow-lg">
+                            <div className="bg-white bg-opacity-95 backdrop-blur-md p-4 rounded-xl border border-red-200 hover:bg-opacity-100 transition-all duration-300 shadow-lg">
                                 <div className="flex items-center justify-center mb-2">
-                                    <XCircle className="w-6 h-6 text-red-300" />
+                                    <XCircle className="w-6 h-6 text-red-600" />
                                 </div>
-                                <div className="text-2xl font-bold text-red-300">{stats?.againstChirag || 0}</div>
-                                <div className="text-sm text-red-200">Won't Vote</div>
+                                <div className="text-2xl font-bold text-red-700">{stats?.againstChirag || 0}</div>
+                                <div className="text-sm text-red-600">Won't Vote</div>
                             </div>
 
-                            <div className="bg-white bg-opacity-10 backdrop-blur-md p-4 rounded-xl border border-white border-opacity-20 hover:bg-opacity-20 transition-all duration-300 shadow-lg">
+                            <div className="bg-white bg-opacity-95 backdrop-blur-md p-4 rounded-xl border border-yellow-200 hover:bg-opacity-100 transition-all duration-300 shadow-lg">
                                 <div className="flex items-center justify-center mb-2">
-                                    <Clock className="w-6 h-6 text-yellow-300" />
+                                    <Clock className="w-6 h-6 text-yellow-600" />
                                 </div>
-                                <div className="text-2xl font-bold text-yellow-300">{stats?.undecided || 0}</div>
-                                <div className="text-sm text-yellow-200">Undecided</div>
+                                <div className="text-2xl font-bold text-yellow-700">{stats?.undecided || 0}</div>
+                                <div className="text-sm text-yellow-600">Undecided</div>
                             </div>
                         </div>
                     </div>
