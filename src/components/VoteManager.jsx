@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Download, Trash2, Users, CheckCircle, XCircle, Clock, UserX, Wifi, WifiOff, RefreshCw, Lock, LogOut, Eye, EyeOff, Menu, X, User, Settings, BarChart3, ChevronUp, ChevronDown, AlertTriangle } from 'lucide-react';
+import { Plus, Download, Trash2, Users, CheckCircle, XCircle, Clock, UserX, Wifi, WifiOff, RefreshCw, Lock, LogOut, Eye, EyeOff, Menu, X, User, Settings, BarChart3, ChevronUp, ChevronDown, AlertTriangle, Filter, ArrowUp, ArrowDown, Search } from 'lucide-react';
 import ApiService from '../services/api.js';
 
 const VoteManager = () => {
@@ -24,6 +24,12 @@ const VoteManager = () => {
     // Error popup and scroll states
     const [errorPopup, setErrorPopup] = useState({ show: false, message: '', title: '' });
     const [showScrollButtons, setShowScrollButtons] = useState(false);
+
+    // Filter and confirmation states
+    const [filterText, setFilterText] = useState('');
+    const [filterHostel, setFilterHostel] = useState('all');
+    const [filterVote, setFilterVote] = useState('all');
+    const [confirmDialog, setConfirmDialog] = useState({ show: false, studentId: null, studentName: '' });
 
     // Hardcoded credentials (in production, this should be handled by backend)
     const validCredentials = {
@@ -126,6 +132,56 @@ const VoteManager = () => {
     const closeErrorPopup = () => {
         setErrorPopup({ show: false, message: '', title: '' });
     };
+
+    // Confirmation dialog functions
+    const showConfirmDialog = (studentId, studentName) => {
+        setConfirmDialog({ show: true, studentId, studentName });
+    };
+
+    const closeConfirmDialog = () => {
+        setConfirmDialog({ show: false, studentId: null, studentName: '' });
+    };
+
+    const confirmDelete = async () => {
+        if (confirmDialog.studentId) {
+            await removeStudent(confirmDialog.studentId);
+            closeConfirmDialog();
+        }
+    };
+
+    // Row movement functions
+    const moveStudentUp = async (index) => {
+        if (index > 0) {
+            const newStudents = [...filteredStudents];
+            [newStudents[index], newStudents[index - 1]] = [newStudents[index - 1], newStudents[index]];
+            setStudents(newStudents);
+            updateStatsLocal(newStudents);
+            saveToLocalStorage(newStudents);
+        }
+    };
+
+    const moveStudentDown = async (index) => {
+        if (index < filteredStudents.length - 1) {
+            const newStudents = [...filteredStudents];
+            [newStudents[index], newStudents[index + 1]] = [newStudents[index + 1], newStudents[index]];
+            setStudents(newStudents);
+            updateStatsLocal(newStudents);
+            saveToLocalStorage(newStudents);
+        }
+    };
+
+    // Filter students based on search criteria
+    const filteredStudents = students.filter(student => {
+        const matchesText = !filterText ||
+            student.name.toLowerCase().includes(filterText.toLowerCase()) ||
+            student.roomNumber.toLowerCase().includes(filterText.toLowerCase());
+
+        const matchesHostel = filterHostel === 'all' || student.hostel === filterHostel;
+
+        const matchesVote = filterVote === 'all' || student.vote === filterVote;
+
+        return matchesText && matchesHostel && matchesVote;
+    });
 
     const loadStudents = async (forceRefresh = false) => {
         // Check cache first (unless force refresh)
@@ -657,6 +713,66 @@ const VoteManager = () => {
                     </div>
                 </div>
 
+                {/* Filter Section */}
+                <div className="bg-white rounded-xl shadow-lg mb-4 p-4">
+                    <div className="flex items-center space-x-2 mb-4">
+                        <Filter className="w-5 h-5 text-blue-600" />
+                        <h3 className="text-lg font-semibold text-gray-800">Filter Students</h3>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {/* Search by name/room */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Search Name/Room</label>
+                            <div className="relative">
+                                <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                <input
+                                    type="text"
+                                    value={filterText}
+                                    onChange={(e) => setFilterText(e.target.value)}
+                                    placeholder="Search by name or room..."
+                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Filter by hostel */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Hostel</label>
+                            <select
+                                value={filterHostel}
+                                onChange={(e) => setFilterHostel(e.target.value)}
+                                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            >
+                                <option value="all">All Hostels</option>
+                                <option value="BH">BH (Boys Hostel)</option>
+                                <option value="GH">GH (Girls Hostel)</option>
+                            </select>
+                        </div>
+
+                        {/* Filter by vote status */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Status</label>
+                            <select
+                                value={filterVote}
+                                onChange={(e) => setFilterVote(e.target.value)}
+                                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            >
+                                <option value="all">All Status</option>
+                                <option value="">Not Asked Yet</option>
+                                <option value="Yes">Will Vote</option>
+                                <option value="No">Won't Vote</option>
+                                <option value="Undecided">Undecided</option>
+                                <option value="Absent">Not Available</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* Filter results info */}
+                    <div className="mt-4 text-sm text-gray-600">
+                        Showing {filteredStudents.length} of {students.length} students
+                    </div>
+                </div>
+
                 {/* Student List - Mobile First Design */}
                 <div className="bg-white rounded-xl shadow-lg mb-4">
                     {/* Desktop Table View - Hidden on mobile */}
@@ -669,11 +785,12 @@ const VoteManager = () => {
                                     <th className="px-4 py-3 text-left text-sm font-semibold">Room No.</th>
                                     <th className="px-4 py-3 text-left text-sm font-semibold">Hostel</th>
                                     <th className="px-4 py-3 text-left text-sm font-semibold">Support Status</th>
+                                    <th className="px-4 py-3 text-center text-sm font-semibold">Move</th>
                                     <th className="px-4 py-3 text-center text-sm font-semibold">Action</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {students.map((student, index) => (
+                                {filteredStudents.map((student, index) => (
                                     <tr key={student._id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-4 py-3">
                                             <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">
@@ -725,8 +842,28 @@ const VoteManager = () => {
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 text-center">
+                                            <div className="flex items-center justify-center space-x-1">
+                                                <button
+                                                    onClick={() => moveStudentUp(index)}
+                                                    disabled={index === 0}
+                                                    className="text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-1 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                                    title="Move Up"
+                                                >
+                                                    <ArrowUp className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => moveStudentDown(index)}
+                                                    disabled={index === filteredStudents.length - 1}
+                                                    className="text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-1 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                                    title="Move Down"
+                                                >
+                                                    <ArrowDown className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-3 text-center">
                                             <button
-                                                onClick={() => removeStudent(student._id)}
+                                                onClick={() => showConfirmDialog(student._id, student.name)}
                                                 className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-all"
                                                 title="Delete Student"
                                             >
@@ -746,14 +883,23 @@ const VoteManager = () => {
                                 <RefreshCw className="w-8 h-8 animate-spin mx-auto text-blue-600 mb-2" />
                                 <p className="text-gray-600">Loading students...</p>
                             </div>
-                        ) : students.length === 0 ? (
+                        ) : filteredStudents.length === 0 ? (
                             <div className="text-center py-8">
                                 <Users className="w-12 h-12 mx-auto text-gray-400 mb-2" />
-                                <p className="text-gray-600">No students added yet</p>
-                                <p className="text-sm text-gray-500">Click "Add Student" to get started</p>
+                                {students.length === 0 ? (
+                                    <>
+                                        <p className="text-gray-600">No students added yet</p>
+                                        <p className="text-sm text-gray-500">Click "Add Student" to get started</p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p className="text-gray-600">No students match your filters</p>
+                                        <p className="text-sm text-gray-500">Try adjusting your search criteria</p>
+                                    </>
+                                )}
                             </div>
                         ) : (
-                            students.map((student, index) => (
+                            filteredStudents.map((student, index) => (
                                 <div key={student._id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                                     {/* Student Header */}
                                     <div className="flex items-center justify-between mb-3">
@@ -764,7 +910,7 @@ const VoteManager = () => {
                                             <span className="text-sm font-medium text-gray-600">Student #{index + 1}</span>
                                         </div>
                                         <button
-                                            onClick={() => removeStudent(student._id)}
+                                            onClick={() => showConfirmDialog(student._id, student.name)}
                                             className="text-red-500 hover:text-red-700 hover:bg-red-100 p-2 rounded-lg transition-all"
                                             title="Delete Student"
                                         >
@@ -909,6 +1055,45 @@ const VoteManager = () => {
                                         className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200"
                                     >
                                         View Existing Entries
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Confirmation Dialog */}
+                {confirmDialog.show && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                        <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 animate-in fade-in-0 zoom-in-95 duration-300">
+                            <div className="p-6">
+                                {/* Header */}
+                                <div className="flex items-center space-x-3 mb-4">
+                                    <div className="bg-red-100 p-2 rounded-full">
+                                        <AlertTriangle className="w-6 h-6 text-red-600" />
+                                    </div>
+                                    <h3 className="text-lg font-semibold text-gray-900">Confirm Deletion</h3>
+                                </div>
+
+                                {/* Message */}
+                                <p className="text-gray-700 mb-6 leading-relaxed">
+                                    Are you sure you want to delete <strong>"{confirmDialog.studentName}"</strong>?
+                                    This action cannot be undone.
+                                </p>
+
+                                {/* Actions */}
+                                <div className="flex justify-end space-x-3">
+                                    <button
+                                        onClick={closeConfirmDialog}
+                                        className="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors duration-200"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={confirmDelete}
+                                        className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors duration-200"
+                                    >
+                                        Delete Student
                                     </button>
                                 </div>
                             </div>
