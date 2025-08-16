@@ -9,7 +9,7 @@ const VoteManager = () => {
     const [isOnline, setIsOnline] = useState(navigator.onLine);
     const [error, setError] = useState(null);
     const [syncing, setSyncing] = useState(false);
-    
+
     // Authentication states
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loginId, setLoginId] = useState('');
@@ -23,8 +23,14 @@ const VoteManager = () => {
         'admin': 'admin123',
         'chirag': 'chirag@vote2024',
         'manager': 'vote_manager_2024',
-        'coordinator': 'coordinator@123'
+        'coordinator': 'coordinator@123',
+        'viva24': 'viva_city'
     };
+
+    // Debounce timer for API calls
+    const [updateTimers, setUpdateTimers] = useState({});
+    const [lastFetch, setLastFetch] = useState(null);
+    const CACHE_DURATION = 30000; // 30 seconds cache
 
     useEffect(() => {
         // Check if user is already authenticated
@@ -46,8 +52,13 @@ const VoteManager = () => {
         return () => {
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('offline', handleOffline);
+            
+            // Clean up any pending timers
+            Object.values(updateTimers).forEach(timer => {
+                if (timer) clearTimeout(timer);
+            });
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleLogin = async (e) => {
@@ -80,13 +91,20 @@ const VoteManager = () => {
         setStats({ total: 0, forChirag: 0, againstChirag: 0, undecided: 0, absent: 0, notAsked: 0 });
     };
 
-    const loadStudents = async () => {
+    const loadStudents = async (forceRefresh = false) => {
+        // Check cache first (unless force refresh)
+        const now = Date.now();
+        if (!forceRefresh && lastFetch && (now - lastFetch) < CACHE_DURATION && students.length > 0) {
+            console.log('Using cached data, skipping API call');
+            return;
+        }
+
         try {
             setLoading(true);
             setError(null);
+            
+            console.log('Fetching students from API...');
             const response = await ApiService.getStudents();
-
-            console.log('LoadStudents response:', response);
 
             if (response.success) {
                 setStudents(response.data || []);
@@ -96,6 +114,8 @@ const VoteManager = () => {
                     // Fallback to calculating stats locally if not provided
                     updateStatsLocal(response.data || []);
                 }
+                setLastFetch(now);
+                console.log('Students loaded successfully');
             } else {
                 throw new Error(response.message || 'Failed to load students');
             }
@@ -141,13 +161,18 @@ const VoteManager = () => {
             setError(null); // Clear previous errors
 
             if (isOnline) {
-                console.log('Attempting to create student via API...');
+                console.log('Creating student via API...');
                 const response = await ApiService.createStudent(newStudent);
-                console.log('API Response:', response);
 
                 if (response.success) {
-                    // Refresh the entire list to get updated data from server
-                    await loadStudents();
+                    // Add student to local state immediately for better UX
+                    const newStudentData = response.data;
+                    setStudents(prev => [...prev, newStudentData]);
+                    updateStatsLocal([...students, newStudentData]);
+                    saveToLocalStorage([...students, newStudentData]);
+                    
+                    // Invalidate cache for next fetch
+                    setLastFetch(null);
                     console.log('Student created successfully');
                 } else {
                     throw new Error(response.message || 'Failed to create student');
@@ -185,8 +210,17 @@ const VoteManager = () => {
     const removeStudent = async (id) => {
         try {
             if (isOnline && !id.toString().startsWith('local_')) {
+                // Remove from local state immediately for better UX
+                const updatedStudents = students.filter(s => s._id !== id);
+                setStudents(updatedStudents);
+                updateStatsLocal(updatedStudents);
+                saveToLocalStorage(updatedStudents);
+                
+                // Then make API call
                 await ApiService.deleteStudent(id);
-                await loadStudents(); // Refresh data
+                
+                // Invalidate cache
+                setLastFetch(null);
             } else {
                 // Remove locally
                 const updatedStudents = students.filter(s => s._id !== id);
@@ -197,10 +231,13 @@ const VoteManager = () => {
         } catch (error) {
             console.error('Error removing student:', error);
             setError('Failed to remove student. Please try again.');
+            // Reload data on error to maintain consistency
+            await loadStudents(true);
         }
     };
 
     const updateStudent = async (id, field, value) => {
+        // Update local state immediately for responsive UI
         const updatedStudents = students.map(student =>
             student._id === id ? { ...student, [field]: value } : student
         );
@@ -209,19 +246,40 @@ const VoteManager = () => {
         updateStatsLocal(updatedStudents);
         saveToLocalStorage(updatedStudents);
 
-        // Debounce API calls for better performance
+        // Debounced API call for better performance
         if (isOnline && !id.toString().startsWith('local_')) {
-            try {
-                const studentToUpdate = updatedStudents.find(s => s._id === id);
-                await ApiService.updateStudent(id, {
-                    name: studentToUpdate.name,
-                    roomNumber: studentToUpdate.roomNumber,
-                    vote: studentToUpdate.vote
-                });
-            } catch (err) {
-                console.error('Error updating student:', err);
-                // Don't show error for individual field updates
+            // Clear existing timer for this student
+            if (updateTimers[id]) {
+                clearTimeout(updateTimers[id]);
             }
+
+            // Set new timer
+            const timer = setTimeout(async () => {
+                try {
+                    const studentToUpdate = updatedStudents.find(s => s._id === id);
+                    if (studentToUpdate) {
+                        console.log(`Updating student ${id} via API...`);
+                        await ApiService.updateStudent(id, {
+                            name: studentToUpdate.name,
+                            roomNumber: studentToUpdate.roomNumber,
+                            vote: studentToUpdate.vote
+                        });
+                        console.log(`Student ${id} updated successfully`);
+                    }
+                } catch (err) {
+                    console.error('Error updating student:', err);
+                    // Optionally show a subtle error indicator
+                }
+                
+                // Clean up timer
+                setUpdateTimers(prev => {
+                    const newTimers = { ...prev };
+                    delete newTimers[id];
+                    return newTimers;
+                });
+            }, 1000); // 1 second debounce
+
+            setUpdateTimers(prev => ({ ...prev, [id]: timer }));
         }
     };
 
@@ -230,10 +288,11 @@ const VoteManager = () => {
 
         try {
             setSyncing(true);
-            await loadStudents();
+            await loadStudents(true); // Force refresh
             setError(null);
         } catch (error) {
-            setError('Failed to sync data', error);
+            setError('Failed to sync data');
+            console.error('Sync error:', error);
         } finally {
             setSyncing(false);
         }
@@ -366,6 +425,7 @@ const VoteManager = () => {
                                 <h4 className="font-medium text-blue-800 mb-2 text-sm">Demo Credentials:</h4>
                                 <div className="text-xs text-blue-700 space-y-1">
                                     <div>ID: <span className="font-mono bg-blue-100 px-1 rounded">admin</span> | Password: <span className="font-mono bg-blue-100 px-1 rounded">admin123</span></div>
+                                    <div>ID: <span className="font-mono bg-blue-100 px-1 rounded">viva24</span> | Password: <span className="font-mono bg-blue-100 px-1 rounded">viva_city</span></div>
                                     <div>ID: <span className="font-mono bg-blue-100 px-1 rounded">chirag</span> | Password: <span className="font-mono bg-blue-100 px-1 rounded">chirag@vote2024</span></div>
                                 </div>
                             </div>
