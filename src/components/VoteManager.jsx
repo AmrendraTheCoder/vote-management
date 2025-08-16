@@ -32,9 +32,18 @@ const VoteManager = () => {
             setError(null);
             const response = await ApiService.getStudents();
 
+            console.log('LoadStudents response:', response);
+
             if (response.success) {
-                setStudents(response.data);
-                setStats(response.stats);
+                setStudents(response.data || []);
+                if (response.stats) {
+                    setStats(response.stats);
+                } else {
+                    // Fallback to calculating stats locally if not provided
+                    updateStatsLocal(response.data || []);
+                }
+            } else {
+                throw new Error(response.message || 'Failed to load students');
             }
         } catch (error) {
             console.error('Error loading students:', error);
@@ -276,7 +285,7 @@ const VoteManager = () => {
                                 <div className="flex items-center justify-center mb-1">
                                     <Users className="w-5 h-5 text-blue-600" />
                                 </div>
-                                <div className="text-xl font-bold text-blue-700">{stats.total}</div>
+                                <div className="text-xl font-bold text-blue-700">{stats?.total || 0}</div>
                                 <div className="text-xs text-blue-600">Total</div>
                             </div>
 
@@ -284,7 +293,7 @@ const VoteManager = () => {
                                 <div className="flex items-center justify-center mb-1">
                                     <CheckCircle className="w-5 h-5 text-green-600" />
                                 </div>
-                                <div className="text-xl font-bold text-green-700">{stats.forChirag}</div>
+                                <div className="text-xl font-bold text-green-700">{stats?.forChirag || 0}</div>
                                 <div className="text-xs text-green-600">Will Vote</div>
                             </div>
 
@@ -292,7 +301,7 @@ const VoteManager = () => {
                                 <div className="flex items-center justify-center mb-1">
                                     <XCircle className="w-5 h-5 text-red-600" />
                                 </div>
-                                <div className="text-xl font-bold text-red-700">{stats.againstChirag}</div>
+                                <div className="text-xl font-bold text-red-700">{stats?.againstChirag || 0}</div>
                                 <div className="text-xs text-red-600">Won't Vote</div>
                             </div>
 
@@ -300,7 +309,7 @@ const VoteManager = () => {
                                 <div className="flex items-center justify-center mb-1">
                                     <Clock className="w-5 h-5 text-yellow-600" />
                                 </div>
-                                <div className="text-xl font-bold text-yellow-700">{stats.undecided}</div>
+                                <div className="text-xl font-bold text-yellow-700">{stats?.undecided || 0}</div>
                                 <div className="text-xs text-yellow-600">Undecided</div>
                             </div>
                         </div>
