@@ -78,8 +78,8 @@ const VoteManager = () => {
 
     const addStudent = async () => {
         const newStudent = {
-            name: '',
-            roomNumber: '',
+            name: 'New Student',
+            roomNumber: 'Room-' + (students.length + 1),
             vote: ''
         };
 
@@ -92,8 +92,8 @@ const VoteManager = () => {
                 console.log('API Response:', response);
 
                 if (response.success) {
-                    setStudents(prev => [...prev, response.data]);
-                    await loadStudents(); // Refresh to get updated stats
+                    // Refresh the entire list to get updated data from server
+                    await loadStudents();
                     console.log('Student created successfully');
                 } else {
                     throw new Error(response.message || 'Failed to create student');
