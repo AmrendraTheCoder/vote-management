@@ -16,8 +16,8 @@ const app = express();
 app.use(
   cors({
     origin: "*", // Allow all origins for now
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
@@ -32,6 +32,22 @@ app.get("/api/health", (req, res) => {
     status: "OK",
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || "development",
+  });
+});
+
+// Root endpoint with API information
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Vote Management API",
+    version: "1.0.0",
+    endpoints: {
+      health: "/api/health",
+      students: "/api/students",
+      stats: "/api/students/stats"
+    },
+    documentation: "Available endpoints listed above",
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -55,8 +71,9 @@ const connectDB = async () => {
   }
 
   try {
-    const mongoURI = process.env.MONGODB_URI || "mongodb://localhost:27017/vote_manager";
-    
+    const mongoURI =
+      process.env.MONGODB_URI || "mongodb://localhost:27017/vote_manager";
+
     // Close existing connection if any
     if (mongoose.connection.readyState !== 0) {
       await mongoose.disconnect();
@@ -97,7 +114,7 @@ export default async function handler(req, res) {
 // For local development
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 5001;
-  
+
   connectDB()
     .then(() => {
       app.listen(PORT, "0.0.0.0", () => {

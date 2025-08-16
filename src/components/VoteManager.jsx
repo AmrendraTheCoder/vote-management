@@ -76,12 +76,12 @@ const VoteManager = () => {
 
         try {
             setError(null); // Clear previous errors
-            
+
             if (isOnline) {
                 console.log('Attempting to create student via API...');
                 const response = await ApiService.createStudent(newStudent);
                 console.log('API Response:', response);
-                
+
                 if (response.success) {
                     setStudents(prev => [...prev, response.data]);
                     await loadStudents(); // Refresh to get updated stats
@@ -105,7 +105,7 @@ const VoteManager = () => {
             console.error('Error adding student:', error);
             const errorMessage = error.message || 'Failed to add student. Please try again.';
             setError(`Add Student Error: ${errorMessage}`);
-            
+
             // Fallback to offline mode
             const localStudent = {
                 ...newStudent,

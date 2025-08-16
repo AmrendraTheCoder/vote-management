@@ -1,57 +1,61 @@
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  import.meta.env.VITE_API_URL || "https://vote-management-alpha.vercel.app/api";
 
 class ApiService {
   constructor() {
     this.baseURL = API_BASE_URL;
   }
 
-    async makeRequest(endpoint, options = {}) {
-        const url = `${this.baseURL}${endpoint}`;
-        
-        try {
-            console.log(`Making request to: ${url}`);
-            console.log('Request options:', options);
-            
-            const response = await fetch(url, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...options.headers
-                },
-                ...options
-            });
+  async makeRequest(endpoint, options = {}) {
+    const url = `${this.baseURL}${endpoint}`;
 
-            console.log('Response status:', response.status);
-            console.log('Response ok:', response.ok);
+    try {
+      console.log(`Making request to: ${url}`);
+      console.log("Request options:", options);
 
-            // Try to get response text first
-            const responseText = await response.text();
-            console.log('Raw response:', responseText);
+      const response = await fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+          ...options.headers,
+        },
+        ...options,
+      });
 
-            let data;
-            try {
-                data = JSON.parse(responseText);
-            } catch (parseError) {
-                console.error('JSON parse error:', parseError);
-                throw new Error(`Invalid JSON response: ${responseText.substring(0, 100)}...`);
-            }
+      console.log("Response status:", response.status);
+      console.log("Response ok:", response.ok);
 
-            console.log('Parsed response data:', data);
+      // Try to get response text first
+      const responseText = await response.text();
+      console.log("Raw response:", responseText);
 
-            if (!response.ok) {
-                throw new Error(data.message || data.error || `HTTP error! status: ${response.status}`);
-            }
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error("JSON parse error:", parseError);
+        throw new Error(
+          `Invalid JSON response: ${responseText.substring(0, 100)}...`
+        );
+      }
 
-            return { success: true, data };
-        } catch (error) {
-            console.error('API request failed:', error);
-            return { 
-                success: false, 
-                error: error.message,
-                message: error.message
-            };
-        }
-    }  // Student API methods
+      console.log("Parsed response data:", data);
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || data.error || `HTTP error! status: ${response.status}`
+        );
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error("API request failed:", error);
+      return {
+        success: false,
+        error: error.message,
+        message: error.message,
+      };
+    }
+  } // Student API methods
   async getStudents() {
     return this.makeRequest("/students");
   }
