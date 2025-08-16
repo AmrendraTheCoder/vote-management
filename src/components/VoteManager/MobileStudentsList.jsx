@@ -19,10 +19,8 @@ const MobileStudentCard = ({
     totalStudents,
     onEdit,
     onDelete,
-    onVoteChange,
     onMove
 }) => {
-    const [isChangingVote, setIsChangingVote] = useState(false);
     const [movingDirection, setMovingDirection] = useState(null);
 
     const getVoteIcon = (vote) => {
@@ -175,55 +173,26 @@ const MobileStudentCard = ({
                 </div>
             </div>
 
-            {/* Support Status */}
+            {/* Support Status - Read Only */}
             <div className="border-t border-gray-200 pt-4">
-                <div className="space-y-3">
-                    <div className="flex items-center space-x-2">
-                        <div className={`p-2 rounded-lg ${student.vote === 'Yes' ? 'bg-green-100' :
-                                student.vote === 'No' ? 'bg-red-100' :
-                                    student.vote === 'Undecided' ? 'bg-yellow-100' :
-                                        student.vote === 'Absent' ? 'bg-orange-100' :
-                                            'bg-gray-100'
-                            }`}>
-                            {getVoteIcon(student.vote)}
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium text-gray-700">Support Status</p>
-                            <p className={`text-xs font-semibold ${student.vote === 'Yes' ? 'text-green-600' :
-                                    student.vote === 'No' ? 'text-red-600' :
-                                        student.vote === 'Undecided' ? 'text-yellow-600' :
-                                            student.vote === 'Absent' ? 'text-orange-600' :
-                                                'text-gray-600'
-                                }`}>
-                                {student.vote === 'Yes' && '✅ Will Vote'}
-                                {student.vote === 'No' && '❌ Won\'t Vote'}
-                                {student.vote === 'Undecided' && '🤔 Undecided'}
-                                {student.vote === 'Absent' && '👻 Absent'}
-                                {(!student.vote || student.vote === '') && '📋 Not Asked'}
-                            </p>
-                        </div>
+                <div className="flex items-center space-x-3">
+                    <div className={`p-2 rounded-lg ${student.vote === 'Yes' ? 'bg-green-100' :
+                            student.vote === 'No' ? 'bg-red-100' :
+                                student.vote === 'Undecided' ? 'bg-yellow-100' :
+                                    student.vote === 'Absent' ? 'bg-orange-100' :
+                                        'bg-gray-100'
+                        }`}>
+                        {getVoteIcon(student.vote)}
                     </div>
-                    <div className="relative">
-                        <select
-                            value={student.vote || ''}
-                            onChange={(e) => handleVoteChange(e.target.value)}
-                            disabled={isChangingVote}
-                            className={`w-full text-sm border-2 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium ${getVoteColor(student.vote)} ${isChangingVote ? 'opacity-50 cursor-not-allowed' : 'hover:border-blue-300'}`}
-                        >
-                            <option value="" className="bg-white text-gray-700">📋 Not Asked</option>
-                            <option value="Yes" className="bg-white text-gray-700">✅ Will Vote</option>
-                            <option value="No" className="bg-white text-gray-700">❌ Won't Vote</option>
-                            <option value="Undecided" className="bg-white text-gray-700">🤔 Undecided</option>
-                            <option value="Absent" className="bg-white text-gray-700">👻 Absent</option>
-                        </select>
-                        {isChangingVote && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 rounded-xl">
-                                <div className="flex items-center space-x-2 text-blue-600">
-                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                                    <span className="text-sm font-medium">Updating...</span>
-                                </div>
-                            </div>
-                        )}
+                    <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-700 mb-1">Support Status</p>
+                        <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${getVoteColor(student.vote)}`}>
+                            {student.vote === 'Yes' && '✅ Will Vote'}
+                            {student.vote === 'No' && '❌ Won\'t Vote'}
+                            {student.vote === 'Undecided' && '🤔 Undecided'}
+                            {student.vote === 'Absent' && '👻 Absent'}
+                            {(!student.vote || student.vote === '') && '📋 Not Asked'}
+                        </span>
                     </div>
                 </div>
             </div>

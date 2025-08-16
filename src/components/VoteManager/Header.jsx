@@ -85,78 +85,143 @@ const Header = ({
 
     return (
         <>
-            {/* Header */}
-            <div className="bg-white border-b border-gray-200 text-gray-800 shadow-sm sticky top-0 z-40">
+            {/* Enhanced Header */}
+            <div className="bg-white border-b border-gray-200 text-gray-800 shadow-lg sticky top-0 z-40">
                 <div className="flex items-center justify-between p-4">
-                    {/* Logo/Title */}
+                    {/* Enhanced Logo/Title */}
                     <div className="flex items-center space-x-3">
-                        <div className="bg-gray-100 rounded-full p-2">
-                            <Users className="w-5 h-5 text-gray-600" />
+                        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl p-3 shadow-md">
+                            <Users className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold">Vote Manager</h1>
-                            {/* <p className="text-xs text-gray-500">Student Support Tracker</p> */}
+                            <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                                Vote Manager
+                            </h1>
+                            <p className="text-sm text-gray-500 font-medium">Student Support Tracker</p>
                         </div>
                     </div>
 
-                    {/* User Info & Menu */}
+                    {/* Enhanced User Info & Menu */}
                     <div className="flex items-center space-x-3">
-                        {/* Connection Status */}
-                        <div className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${isOnline
-                            ? 'bg-green-50 text-green-700'
-                            : 'bg-red-50 text-red-700'
+                        {/* Enhanced Connection Status */}
+                        <div className={`flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-semibold shadow-sm ${isOnline
+                            ? 'bg-green-50 text-green-700 border border-green-200'
+                            : 'bg-red-50 text-red-700 border border-red-200'
                             }`}>
                             {syncing ? (
-                                <RefreshCw className="w-3 h-3 animate-spin" />
+                                <RefreshCw className="w-4 h-4 animate-spin" />
                             ) : isOnline ? (
-                                <Wifi className="w-3 h-3" />
+                                <Wifi className="w-4 h-4" />
                             ) : (
-                                <WifiOff className="w-3 h-3" />
+                                <WifiOff className="w-4 h-4" />
                             )}
                             <span className="hidden sm:inline">
                                 {syncing ? 'Syncing' : isOnline ? 'Online' : 'Offline'}
                             </span>
                         </div>
 
-                        {/* User Avatar */}
-                        <div className="flex items-center space-x-2 bg-gray-100 rounded-full px-3 py-1">
-                            <User className="w-4 h-4 text-gray-600" />
-                            <span className="text-sm font-medium text-gray-700">{user}</span>
-                        </div>
+                        {/* Enhanced User Avatar */}
+                        {/* <div className="flex items-center space-x-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl px-4 py-2 border border-gray-200 shadow-sm">
+                            <div className="bg-blue-100 rounded-full p-2">
+                                <User className="w-4 h-4 text-blue-600" />
+                            </div>
+                            <span className="text-sm font-semibold text-gray-700">{user}</span>
+                        </div> */}
 
-                        {/* Menu Button */}
+                        {/* Enhanced Menu Button */}
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="bg-gray-100 hover:bg-gray-200 rounded-full p-2 transition-all duration-200"
+                            className="bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 rounded-xl p-3 transition-all duration-200 shadow-sm hover:shadow-md"
                         >
                             {isMenuOpen ? <X className="w-5 h-5 text-gray-600" /> : <Menu className="w-5 h-5 text-gray-600" />}
                         </button>
                     </div>
                 </div>
 
-                {/* Quick Stats Bar */}
-                <div className="px-4 pb-3">
-                    <div className="flex justify-between items-center text-xs bg-gray-50 border rounded-lg p-2">
-                        <div className="text-center">
-                            <div className="font-bold text-gray-800">{stats.total}</div>
-                            <div className="text-gray-500">Total</div>
+                {/* Enhanced Stats Bar */}
+                <div className="px-4 pb-4">
+                    <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div className="grid grid-cols-5 gap-4">
+                            {/* Total Students */}
+                            <div className="text-center">
+                                <div className="bg-blue-100 rounded-full p-2 w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                                    <Users className="w-5 h-5 text-blue-600" />
+                                </div>
+                                <div className="font-bold text-lg text-gray-900">{stats.total}</div>
+                                <div className="text-xs text-gray-600 font-medium">Total</div>
+                            </div>
+
+                            {/* Will Vote */}
+                            <div className="text-center">
+                                <div className="bg-green-100 rounded-full p-2 w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                                    <div className="text-green-600 font-bold text-lg">✓</div>
+                                </div>
+                                <div className="font-bold text-lg text-green-700">{stats.yes}</div>
+                                <div className="text-xs text-gray-600 font-medium">Yes</div>
+                            </div>
+
+                            {/* Won't Vote */}
+                            <div className="text-center">
+                                <div className="bg-red-100 rounded-full p-2 w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                                    <div className="text-red-600 font-bold text-lg">✕</div>
+                                </div>
+                                <div className="font-bold text-lg text-red-700">{stats.no}</div>
+                                <div className="text-xs text-gray-600 font-medium">No</div>
+                            </div>
+
+                            {/* Undecided */}
+                            <div className="text-center">
+                                <div className="bg-yellow-100 rounded-full p-2 w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                                    <div className="text-yellow-600 font-bold text-lg">?</div>
+                                </div>
+                                <div className="font-bold text-lg text-yellow-700">{stats.undecided}</div>
+                                <div className="text-xs text-gray-600 font-medium">Undecided</div>
+                            </div>
+
+                            {/* Pending */}
+                            <div className="text-center">
+                                <div className="bg-gray-100 rounded-full p-2 w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                                    <div className="text-gray-600 font-bold text-lg">⏳</div>
+                                </div>
+                                <div className="font-bold text-lg text-gray-700">{stats.notAsked}</div>
+                                <div className="text-xs text-gray-600 font-medium">Pending</div>
+                            </div>
                         </div>
-                        <div className="text-center">
-                            <div className="font-bold text-gray-800">{stats.yes}</div>
-                            <div className="text-gray-500">Yes</div>
+
+                        {/* Progress Bar */}
+                        <div className="mt-4 bg-gray-200 rounded-full h-2 overflow-hidden">
+                            <div className="h-full flex">
+                                {stats.total > 0 && (
+                                    <>
+                                        <div
+                                            className="bg-green-500 transition-all duration-500"
+                                            style={{ width: `${(stats.yes / stats.total) * 100}%` }}
+                                        ></div>
+                                        <div
+                                            className="bg-red-500 transition-all duration-500"
+                                            style={{ width: `${(stats.no / stats.total) * 100}%` }}
+                                        ></div>
+                                        <div
+                                            className="bg-yellow-500 transition-all duration-500"
+                                            style={{ width: `${(stats.undecided / stats.total) * 100}%` }}
+                                        ></div>
+                                        <div
+                                            className="bg-gray-400 transition-all duration-500"
+                                            style={{ width: `${(stats.notAsked / stats.total) * 100}%` }}
+                                        ></div>
+                                    </>
+                                )}
+                            </div>
                         </div>
-                        <div className="text-center">
-                            <div className="font-bold text-gray-800">{stats.no}</div>
-                            <div className="text-gray-500">No</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="font-bold text-gray-800">{stats.undecided}</div>
-                            <div className="text-gray-500">Undecided</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="font-bold text-gray-800">{stats.notAsked}</div>
-                            <div className="text-gray-500">Pending</div>
-                        </div>
+
+                        {/* Percentage Display */}
+                        {stats.total > 0 && (
+                            <div className="mt-2 flex justify-center text-xs text-gray-600">
+                                <span className="bg-white px-2 py-1 rounded-full shadow-sm">
+                                    {Math.round((stats.yes / stats.total) * 100)}% support rate
+                                </span>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -218,23 +283,23 @@ const Header = ({
                                             onClick={item.action}
                                             disabled={item.disabled}
                                             className={`w-full flex items-center space-x-4 p-4 rounded-xl transition-all duration-200 ${item.disabled
-                                                    ? 'bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-200'
-                                                    : item.label === 'Logout'
-                                                        ? 'bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-800 border border-red-200 hover:border-red-300'
-                                                        : 'bg-blue-50 hover:bg-blue-100 text-blue-700 hover:text-blue-800 border border-blue-200 hover:border-blue-300 hover:shadow-sm'
+                                                ? 'bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-200'
+                                                : item.label === 'Logout'
+                                                    ? 'bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-800 border border-red-200 hover:border-red-300'
+                                                    : 'bg-blue-50 hover:bg-blue-100 text-blue-700 hover:text-blue-800 border border-blue-200 hover:border-blue-300 hover:shadow-sm'
                                                 }`}
                                         >
                                             <div className={`p-2 rounded-lg ${item.disabled
-                                                    ? 'bg-gray-200'
-                                                    : item.label === 'Logout'
-                                                        ? 'bg-red-100'
-                                                        : 'bg-blue-100'
+                                                ? 'bg-gray-200'
+                                                : item.label === 'Logout'
+                                                    ? 'bg-red-100'
+                                                    : 'bg-blue-100'
                                                 }`}>
                                                 <IconComponent className={`w-5 h-5 ${item.disabled
-                                                        ? 'text-gray-400'
-                                                        : item.label === 'Logout'
-                                                            ? 'text-red-600'
-                                                            : 'text-blue-600'
+                                                    ? 'text-gray-400'
+                                                    : item.label === 'Logout'
+                                                        ? 'text-red-600'
+                                                        : 'text-blue-600'
                                                     }`} />
                                             </div>
                                             <div className="text-left">

@@ -18,7 +18,6 @@ const StudentsTable = ({
     students,
     onEdit,
     onDelete,
-    onVoteChange,
     onMove,
     sortField,
     sortDirection,
@@ -72,10 +71,6 @@ const StudentsTable = ({
         } finally {
             setMovingStudent(null);
         }
-    };
-
-    const handleVoteChange = async (studentId, newVote) => {
-        await onVoteChange(studentId, newVote);
     };
 
     if (students.length === 0) {
@@ -190,18 +185,7 @@ const StudentsTable = ({
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="flex items-center space-x-2">
-                                        <select
-                                            value={student.vote || ''}
-                                            onChange={(e) => handleVoteChange(student._id, e.target.value)}
-                                            className={`text-sm border rounded-lg px-3 py-2 min-w-[140px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium ${getVoteColor(student.vote)}`}
-                                        >
-                                            <option value="" className="bg-white text-gray-700">📋 Not Asked</option>
-                                            <option value="Yes" className="bg-white text-gray-700">✅ Will Vote</option>
-                                            <option value="No" className="bg-white text-gray-700">❌ Won't Vote</option>
-                                            <option value="Undecided" className="bg-white text-gray-700">🤔 Undecided</option>
-                                            <option value="Absent" className="bg-white text-gray-700">👻 Absent</option>
-                                        </select>
+                                    <div className="flex items-center space-x-3">
                                         {/* Status Icon */}
                                         <div className="flex-shrink-0">
                                             {student.vote === 'Yes' && <CheckCircle className="w-5 h-5 text-green-600" />}
@@ -210,6 +194,14 @@ const StudentsTable = ({
                                             {student.vote === 'Absent' && <UserMinus className="w-5 h-5 text-orange-600" />}
                                             {(!student.vote || student.vote === '') && <div className="w-5 h-5 rounded-full bg-gray-300 border-2 border-gray-400"></div>}
                                         </div>
+                                        {/* Status Text */}
+                                        <span className={`text-sm font-medium px-3 py-1.5 rounded-full ${getVoteColor(student.vote)}`}>
+                                            {student.vote === 'Yes' && '✅ Will Vote'}
+                                            {student.vote === 'No' && '❌ Won\'t Vote'}
+                                            {student.vote === 'Undecided' && '🤔 Undecided'}
+                                            {student.vote === 'Absent' && '👻 Absent'}
+                                            {(!student.vote || student.vote === '') && '📋 Not Asked'}
+                                        </span>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

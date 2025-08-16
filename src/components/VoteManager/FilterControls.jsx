@@ -50,38 +50,45 @@ const FilterControls = ({
     };
 
     return (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 space-y-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex items-center space-x-2">
                     <Filter className="w-5 h-5 text-gray-500" />
                     <h3 className="text-lg font-semibold text-gray-900">Filters & Search</h3>
                 </div>
-                {hasActiveFilters && (
-                    <button
-                        onClick={clearFilters}
-                        className="text-sm text-red-600 hover:text-red-800 flex items-center space-x-1 px-2 py-1 rounded hover:bg-red-50 transition-colors"
-                    >
-                        <X className="w-4 h-4" />
-                        <span>Clear All</span>
-                    </button>
-                )}
+                <div className="flex items-center justify-between gap-4">
+                    {/* Results Count */}
+                    <div className="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-full">
+                        <Users className="w-4 h-4 inline mr-1" />
+                        {filteredCount} of {totalStudents} students
+                    </div>
+                    {hasActiveFilters && (
+                        <button
+                            onClick={clearFilters}
+                            className="text-sm text-red-600 hover:text-red-800 flex items-center space-x-1 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors border border-red-200"
+                        >
+                            <X className="w-4 h-4" />
+                            <span>Clear All</span>
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* Search Bar */}
             <div className="relative">
-                <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                     type="text"
                     placeholder="Search by name or room number..."
                     value={searchTerm}
                     onChange={(e) => onSearchChange(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    className="w-full pl-12 pr-12 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base placeholder-gray-500"
                 />
                 {searchTerm && (
                     <button
                         onClick={() => onSearchChange('')}
-                        className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -89,17 +96,17 @@ const FilterControls = ({
             </div>
 
             {/* Filter Controls */}
-            <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-2 lg:grid-cols-3'}`}>
+            <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-2 lg:grid-cols-3'}`}>
                 {/* Hostel Filter */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                        <Building className="w-4 h-4 inline mr-1" />
+                <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                        <Building className="w-4 h-4 inline mr-2" />
                         Hostel Type
                     </label>
                     <select
                         value={selectedHostel}
                         onChange={(e) => onHostelChange(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white text-gray-900"
                     >
                         <option value="all">All Hostels</option>
                         <option value="BH">Boys Hostel (BH)</option>
@@ -108,15 +115,15 @@ const FilterControls = ({
                 </div>
 
                 {/* Vote Status Filter */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                        <CheckCircle className="w-4 h-4 inline mr-1" />
+                <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                        <CheckCircle className="w-4 h-4 inline mr-2" />
                         Support Status
                     </label>
                     <select
                         value={selectedVote}
                         onChange={(e) => onVoteChange(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white text-gray-900"
                     >
                         <option value="all">All Statuses</option>
                         <option value="">Not Asked</option>
@@ -129,9 +136,9 @@ const FilterControls = ({
 
                 {/* Sort Control */}
                 {!isMobile && (
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            <SortAsc className="w-4 h-4 inline mr-1" />
+                    <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                            <SortAsc className="w-4 h-4 inline mr-2" />
                             Sort By
                         </label>
                         <select
@@ -140,7 +147,7 @@ const FilterControls = ({
                                 const [field, direction] = e.target.value.split('-');
                                 onSort(field, direction);
                             }}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white text-gray-900"
                         >
                             <option value="name-asc">Name (A-Z)</option>
                             <option value="name-desc">Name (Z-A)</option>
