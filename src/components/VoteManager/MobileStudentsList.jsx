@@ -116,20 +116,20 @@ const MobileStudentCard = ({
                     </div>
                 </div>
 
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
                     <button
                         onClick={() => onEdit(student)}
-                        className="text-blue-600 hover:text-blue-800 p-2 rounded-full hover:bg-blue-50 transition-colors"
+                        className="text-blue-600 hover:text-blue-800 p-1.5 rounded-full hover:bg-blue-50 transition-colors"
                         title="Edit student"
                     >
-                        <Edit className="w-5 h-5" />
+                        <Edit className="w-4 h-4" />
                     </button>
                     <button
                         onClick={() => onDelete(student._id)}
-                        className="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors"
+                        className="text-red-600 hover:text-red-800 p-1.5 rounded-full hover:bg-red-50 transition-colors"
                         title="Delete student"
                     >
-                        <Trash2 className="w-5 h-5" />
+                        <Trash2 className="w-4 h-4" />
                     </button>
                 </div>
             </div>
@@ -166,8 +166,8 @@ const MobileStudentCard = ({
                     <div>
                         <p className="text-sm text-gray-500">Hostel</p>
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${student.hostel === 'GH'
-                                ? 'bg-pink-100 text-pink-800'
-                                : 'bg-blue-100 text-blue-800'
+                            ? 'bg-pink-100 text-pink-800'
+                            : 'bg-blue-100 text-blue-800'
                             }`}>
                             {student.hostel}
                         </span>

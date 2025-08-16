@@ -183,8 +183,8 @@ const StudentsTable = ({
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${student.hostel === 'GH'
-                                            ? 'bg-pink-100 text-pink-800'
-                                            : 'bg-blue-100 text-blue-800'
+                                        ? 'bg-pink-100 text-pink-800'
+                                        : 'bg-blue-100 text-blue-800'
                                         }`}>
                                         {student.hostel}
                                     </span>
