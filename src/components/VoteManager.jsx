@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Download, Trash2, Users, CheckCircle, XCircle, Clock, UserX, Wifi, WifiOff, RefreshCw, Lock, LogOut, Eye, EyeOff, Menu, X, User, Settings, BarChart3 } from 'lucide-react';
+import { Plus, Download, Trash2, Users, CheckCircle, XCircle, Clock, UserX, Wifi, WifiOff, RefreshCw, Lock, LogOut, Eye, EyeOff, Menu, X, User, Settings, BarChart3, ChevronUp, ChevronDown, AlertTriangle } from 'lucide-react';
 import ApiService from '../services/api.js';
 
 const VoteManager = () => {
@@ -20,6 +20,10 @@ const VoteManager = () => {
 
     // Menu states
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    // Error popup and scroll states
+    const [errorPopup, setErrorPopup] = useState({ show: false, message: '', title: '' });
+    const [showScrollButtons, setShowScrollButtons] = useState(false);
 
     // Hardcoded credentials (in production, this should be handled by backend)
     const validCredentials = {
@@ -64,6 +68,17 @@ const VoteManager = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // Scroll detection for showing scroll buttons
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            setShowScrollButtons(scrollTop > 300); // Show buttons after scrolling 300px
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoginLoading(true);
@@ -92,6 +107,24 @@ const VoteManager = () => {
         setPassword('');
         setStudents([]);
         setStats({ total: 0, forChirag: 0, againstChirag: 0, undecided: 0, absent: 0, notAsked: 0 });
+    };
+
+    // Scroll functions
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const scrollToBottom = () => {
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+    };
+
+    // Error popup functions
+    const showErrorPopup = (message, title = 'Error') => {
+        setErrorPopup({ show: true, message, title });
+    };
+
+    const closeErrorPopup = () => {
+        setErrorPopup({ show: false, message: '', title: '' });
     };
 
     const loadStudents = async (forceRefresh = false) => {
@@ -157,6 +190,7 @@ const VoteManager = () => {
         const newStudent = {
             name: 'New Student',
             roomNumber: 'Room-' + (students.length + 1),
+            hostel: 'BH', // Default to Boys Hostel
             vote: ''
         };
 
@@ -195,9 +229,16 @@ const VoteManager = () => {
         } catch (error) {
             console.error('Error adding student:', error);
             const errorMessage = error.message || 'Failed to add student. Please try again.';
+
+            // Check if it's a duplicate entry error
+            if (errorMessage.includes('already exists')) {
+                showErrorPopup(errorMessage, 'Duplicate Entry Detected');
+                return; // Don't add to offline storage for duplicates
+            }
+
             setError(`Add Student Error: ${errorMessage}`);
 
-            // Fallback to offline mode
+            // Fallback to offline mode for non-duplicate errors
             const localStudent = {
                 ...newStudent,
                 _id: 'local_' + Date.now(),
@@ -265,13 +306,22 @@ const VoteManager = () => {
                         await ApiService.updateStudent(id, {
                             name: studentToUpdate.name,
                             roomNumber: studentToUpdate.roomNumber,
+                            hostel: studentToUpdate.hostel || 'BH',
                             vote: studentToUpdate.vote
                         });
                         console.log(`Student ${id} updated successfully`);
                     }
                 } catch (err) {
                     console.error('Error updating student:', err);
-                    // Optionally show a subtle error indicator
+                    const errorMessage = err.message || 'Failed to update student';
+
+                    // Check if it's a duplicate entry error
+                    if (errorMessage.includes('already exists')) {
+                        showErrorPopup(errorMessage, 'Duplicate Entry Detected');
+                    } else {
+                        // Show a subtle error indicator for other errors
+                        setError(`Update Error: ${errorMessage}`);
+                    }
                 }
 
                 // Clean up timer
@@ -303,11 +353,12 @@ const VoteManager = () => {
 
     const exportToCSV = () => {
         const csvContent = [
-            ['S.No.', 'Student Name', 'Room Number', 'Support Status for Chirag Sir'],
+            ['S.No.', 'Student Name', 'Room Number', 'Hostel', 'Support Status for Chirag Sir'],
             ...students.map((student, index) => [
                 index + 1,
                 student.name || '',
                 student.roomNumber || '',
+                student.hostel || 'BH',
                 student.vote || ''
             ])
         ].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
@@ -616,6 +667,7 @@ const VoteManager = () => {
                                     <th className="px-4 py-3 text-left text-sm font-semibold">S.No.</th>
                                     <th className="px-4 py-3 text-left text-sm font-semibold">Student Name</th>
                                     <th className="px-4 py-3 text-left text-sm font-semibold">Room No.</th>
+                                    <th className="px-4 py-3 text-left text-sm font-semibold">Hostel</th>
                                     <th className="px-4 py-3 text-left text-sm font-semibold">Support Status</th>
                                     <th className="px-4 py-3 text-center text-sm font-semibold">Action</th>
                                 </tr>
@@ -645,6 +697,16 @@ const VoteManager = () => {
                                                 placeholder="A-101"
                                                 className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                             />
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <select
+                                                value={student.hostel || 'BH'}
+                                                onChange={(e) => updateStudent(student._id, 'hostel', e.target.value)}
+                                                className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                                            >
+                                                <option value="BH">BH (Boys Hostel)</option>
+                                                <option value="GH">GH (Girls Hostel)</option>
+                                            </select>
                                         </td>
                                         <td className="px-4 py-3">
                                             <div className="flex items-center space-x-2">
@@ -736,6 +798,19 @@ const VoteManager = () => {
                                             />
                                         </div>
 
+                                        {/* Hostel Selection */}
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-700 mb-1">Hostel</label>
+                                            <select
+                                                value={student.hostel || 'BH'}
+                                                onChange={(e) => updateStudent(student._id, 'hostel', e.target.value)}
+                                                className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                                            >
+                                                <option value="BH">BH (Boys Hostel)</option>
+                                                <option value="GH">GH (Girls Hostel)</option>
+                                            </select>
+                                        </div>
+
                                         {/* Vote Selection */}
                                         <div>
                                             <label className="block text-xs font-medium text-gray-700 mb-1">Support Status</label>
@@ -781,6 +856,65 @@ const VoteManager = () => {
                         </button>
                     </div>
                 </div>
+
+                {/* Scroll Buttons */}
+                {showScrollButtons && (
+                    <div className="fixed right-4 bottom-4 flex flex-col space-y-2 z-50">
+                        <button
+                            onClick={scrollToTop}
+                            className="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+                            title="Scroll to Top (Stats)"
+                        >
+                            <ChevronUp className="w-6 h-6" />
+                        </button>
+                        <button
+                            onClick={scrollToBottom}
+                            className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+                            title="Scroll to Bottom (Add Entry)"
+                        >
+                            <ChevronDown className="w-6 h-6" />
+                        </button>
+                    </div>
+                )}
+
+                {/* Error Popup Modal */}
+                {errorPopup.show && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                        <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 animate-in fade-in-0 zoom-in-95 duration-300">
+                            <div className="p-6">
+                                {/* Header */}
+                                <div className="flex items-center space-x-3 mb-4">
+                                    <div className="bg-red-100 p-2 rounded-full">
+                                        <AlertTriangle className="w-6 h-6 text-red-600" />
+                                    </div>
+                                    <h3 className="text-lg font-semibold text-gray-900">{errorPopup.title}</h3>
+                                </div>
+
+                                {/* Message */}
+                                <p className="text-gray-700 mb-6 leading-relaxed">{errorPopup.message}</p>
+
+                                {/* Actions */}
+                                <div className="flex justify-end space-x-3">
+                                    <button
+                                        onClick={closeErrorPopup}
+                                        className="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors duration-200"
+                                    >
+                                        Close
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            closeErrorPopup();
+                                            scrollToTop(); // Scroll to stats when user acknowledges duplicate
+                                        }}
+                                        className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200"
+                                    >
+                                        View Existing Entries
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

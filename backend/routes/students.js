@@ -36,7 +36,7 @@ router.get("/", async (req, res) => {
 // POST /api/students - Create a new student
 router.post("/", async (req, res) => {
   try {
-    const { name, roomNumber, vote = "" } = req.body;
+    const { name, roomNumber, hostel = "BH", vote = "" } = req.body;
 
     // Validation
     if (!name || !roomNumber) {
@@ -46,20 +46,34 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Check for duplicate room number
+    // Validate hostel type
+    if (!["GH", "BH"].includes(hostel)) {
+      return res.status(400).json({
+        success: false,
+        message: "Hostel must be either GH (Girls Hostel) or BH (Boys Hostel)",
+      });
+    }
+
+    // Check for exact duplicate entry (same name + room + hostel)
     const existingStudent = await Student.findOne({
+      name: name.trim(),
       roomNumber: roomNumber.trim(),
+      hostel: hostel,
     });
+
     if (existingStudent) {
       return res.status(400).json({
         success: false,
-        message: "A student with this room number already exists",
+        message: `A student named "${name.trim()}" already exists in room ${roomNumber.trim()} at ${hostel}. Please check if this is a duplicate entry.`,
       });
     }
+
+    // Note: Multiple students per room are allowed, but exact duplicates are prevented
 
     const student = new Student({
       name: name.trim(),
       roomNumber: roomNumber.trim(),
+      hostel,
       vote,
     });
 
@@ -84,13 +98,21 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, roomNumber, vote } = req.body;
+    const { name, roomNumber, hostel, vote } = req.body;
 
     // Validation
     if (!name || !roomNumber) {
       return res.status(400).json({
         success: false,
         message: "Name and room number are required",
+      });
+    }
+
+    // Validate hostel type if provided
+    if (hostel && !["GH", "BH"].includes(hostel)) {
+      return res.status(400).json({
+        success: false,
+        message: "Hostel must be either GH (Girls Hostel) or BH (Boys Hostel)",
       });
     }
 
@@ -103,29 +125,41 @@ router.put("/:id", async (req, res) => {
       });
     }
 
-    // Check for duplicate room number (excluding current student)
-    const duplicateRoom = await Student.findOne({
+    // Check for exact duplicate entry (same name + room + hostel), excluding current student
+    const duplicateStudent = await Student.findOne({
+      name: name.trim(),
       roomNumber: roomNumber.trim(),
+      hostel: hostel || existingStudent.hostel,
       _id: { $ne: id },
     });
 
-    if (duplicateRoom) {
+    if (duplicateStudent) {
       return res.status(400).json({
         success: false,
-        message: "A student with this room number already exists",
+        message: `A student named "${name.trim()}" already exists in room ${roomNumber.trim()} at ${
+          hostel || existingStudent.hostel
+        }. Please check if this is a duplicate entry.`,
       });
     }
 
-    const updatedStudent = await Student.findByIdAndUpdate(
-      id,
-      {
-        name: name.trim(),
-        roomNumber: roomNumber.trim(),
-        vote,
-        updatedAt: new Date(),
-      },
-      { new: true, runValidators: true }
-    );
+    // Note: Multiple students per room are allowed, but exact duplicates are prevented
+
+    const updateData = {
+      name: name.trim(),
+      roomNumber: roomNumber.trim(),
+      vote,
+      updatedAt: new Date(),
+    };
+
+    // Only update hostel if provided (for backward compatibility)
+    if (hostel) {
+      updateData.hostel = hostel;
+    }
+
+    const updatedStudent = await Student.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    });
 
     res.json({
       success: true,

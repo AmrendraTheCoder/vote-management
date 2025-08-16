@@ -14,6 +14,12 @@ const studentSchema = new mongoose.Schema(
       trim: true,
       maxlength: [20, "Room number cannot exceed 20 characters"],
     },
+    hostel: {
+      type: String,
+      enum: ["GH", "BH"],
+      required: [true, "Hostel is required"],
+      default: "BH",
+    },
     vote: {
       type: String,
       enum: ["", "Yes", "No", "Undecided", "Absent"],
@@ -33,8 +39,8 @@ const studentSchema = new mongoose.Schema(
   }
 );
 
-// Index for better query performance
-studentSchema.index({ roomNumber: 1 });
+// Index for better query performance - allowing multiple students per room
+studentSchema.index({ roomNumber: 1, hostel: 1 });
 studentSchema.index({ vote: 1 });
 studentSchema.index({ createdAt: -1 });
 
