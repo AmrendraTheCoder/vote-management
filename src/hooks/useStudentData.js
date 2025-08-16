@@ -281,6 +281,45 @@ const useStudentData = (isAuthenticated = false) => {
     }
   };
 
+  const updateCompleteStudent = async (studentData) => {
+    try {
+      const studentId = studentData._id;
+
+      // Update the local state immediately
+      const updatedStudents = students.map((student) =>
+        student._id === studentId ? { ...student, ...studentData } : student
+      );
+
+      setStudents(updatedStudents);
+      updateStatsLocal(updatedStudents);
+      saveToLocalStorage(updatedStudents);
+
+      // Update via API if online
+      if (isOnline && !studentId.toString().startsWith("local_")) {
+        console.log(`Updating complete student ${studentId} via API...`);
+        await ApiService.updateStudent(studentId, {
+          name: studentData.name,
+          roomNumber: studentData.roomNumber,
+          hostel: studentData.hostel || "BH",
+          vote: studentData.vote || "",
+        });
+        console.log(`Student ${studentId} updated successfully`);
+      }
+
+      return { success: true };
+    } catch (err) {
+      console.error("Error updating complete student:", err);
+      const errorMessage = err.message || "Failed to update student";
+
+      if (errorMessage.includes("already exists")) {
+        throw new Error(errorMessage);
+      } else {
+        setError(`Update Error: ${errorMessage}`);
+        throw new Error(errorMessage);
+      }
+    }
+  };
+
   const syncData = async () => {
     setSyncing(true);
     try {
@@ -349,6 +388,7 @@ const useStudentData = (isAuthenticated = false) => {
     deleteStudent: removeStudent, // Alias for consistency
     removeStudent,
     updateStudent,
+    updateCompleteStudent,
     moveStudent,
     bulkAddStudents,
     refreshData: loadStudents, // Alias for refreshing data

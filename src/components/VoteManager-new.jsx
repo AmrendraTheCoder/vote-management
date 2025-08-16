@@ -314,7 +314,7 @@ const VoteManager = () => {
 
                 {/* Add Student Button */}
                 {!loading && (
-                    <div className="flex justify-between items-center">
+                    <div className="flex flex-col justify-between items-center">
                         <h2 className="text-2xl font-bold text-gray-900">Students Management</h2>
                         <button
                             onClick={handleAddStudent}

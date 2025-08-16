@@ -41,6 +41,7 @@ const VoteManager = () => {
         syncing,
         addStudent,
         updateStudent,
+        updateCompleteStudent,
         deleteStudent,
         moveStudent,
         bulkAddStudents,
@@ -123,7 +124,7 @@ const VoteManager = () => {
     const handleSaveStudent = async (studentData) => {
         try {
             if (editingStudent) {
-                await updateStudent(studentData);
+                await updateCompleteStudent(studentData);
                 showSuccessMessage('Student updated successfully');
             } else {
                 await addStudent(studentData);
@@ -157,10 +158,7 @@ const VoteManager = () => {
 
     const handleVoteChange = async (studentId, newVote) => {
         try {
-            const student = students.find(s => s._id === studentId);
-            if (student) {
-                await updateStudent({ ...student, vote: newVote });
-            }
+            await updateStudent(studentId, 'vote', newVote);
         } catch (error) {
             showErrorMessage(error.message || 'Failed to update vote');
         }
