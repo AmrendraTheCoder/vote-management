@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Download, Trash2, Users, CheckCircle, XCircle, Clock, UserX, Wifi, WifiOff, RefreshCw, Lock, LogOut, Eye, EyeOff } from 'lucide-react';
+import { Plus, Download, Trash2, Users, CheckCircle, XCircle, Clock, UserX, Wifi, WifiOff, RefreshCw, Lock, LogOut, Eye, EyeOff, Menu, X, User, Settings, BarChart3 } from 'lucide-react';
 import ApiService from '../services/api.js';
 
 const VoteManager = () => {
@@ -17,6 +17,9 @@ const VoteManager = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loginError, setLoginError] = useState('');
     const [loginLoading, setLoginLoading] = useState(false);
+
+    // Menu states
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     // Hardcoded credentials (in production, this should be handled by backend)
     const validCredentials = {
@@ -419,22 +422,79 @@ const VoteManager = () => {
                                 )}
                             </button>
                         </form>
-
-                        <div className="mt-6 text-center">
-                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                                <h4 className="font-medium text-blue-800 mb-2 text-sm">Demo Credentials:</h4>
-                                <div className="text-xs text-blue-700 space-y-1">
-                                    <div>ID: <span className="font-mono bg-blue-100 px-1 rounded">admin</span> | Password: <span className="font-mono bg-blue-100 px-1 rounded">admin123</span></div>
-                                    <div>ID: <span className="font-mono bg-blue-100 px-1 rounded">viva24</span> | Password: <span className="font-mono bg-blue-100 px-1 rounded">viva_city</span></div>
-                                    <div>ID: <span className="font-mono bg-blue-100 px-1 rounded">chirag</span> | Password: <span className="font-mono bg-blue-100 px-1 rounded">chirag@vote2024</span></div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             )}
 
             <div className="max-w-6xl mx-auto">
+                {/* Slide Menu Overlay */}
+                {isMenuOpen && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={() => setIsMenuOpen(false)}>
+                        <div
+                            className="fixed left-0 top-0 h-full w-80 bg-white shadow-2xl transform transition-transform duration-300 z-50"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="flex flex-col h-full">
+                                {/* Menu Header */}
+                                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center space-x-3">
+                                            <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                                <User className="w-6 h-6" />
+                                            </div>
+                                            <div>
+                                                <h3 className="font-semibold text-lg">{localStorage.getItem('voteManagerUser') || 'User'}</h3>
+                                                <p className="text-blue-200 text-sm">Vote Manager</p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => setIsMenuOpen(false)}
+                                            className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
+                                        >
+                                            <X className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Menu Items */}
+                                <div className="flex-1 py-6">
+                                    <nav className="space-y-2 px-4">
+                                        <button className="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
+                                            <BarChart3 className="w-5 h-5" />
+                                            <span>Dashboard</span>
+                                        </button>
+                                        <button className="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
+                                            <Users className="w-5 h-5" />
+                                            <span>Students</span>
+                                        </button>
+                                        <button className="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
+                                            <Download className="w-5 h-5" />
+                                            <span>Export Data</span>
+                                        </button>
+                                        <button className="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
+                                            <Settings className="w-5 h-5" />
+                                            <span>Settings</span>
+                                        </button>
+                                    </nav>
+                                </div>
+
+                                {/* Menu Footer */}
+                                <div className="border-t border-gray-200 p-4">
+                                    <button
+                                        onClick={() => {
+                                            setIsMenuOpen(false);
+                                            handleLogout();
+                                        }}
+                                        className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                    >
+                                        <LogOut className="w-5 h-5" />
+                                        <span>Logout</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Connection Status & Error Messages */}
                 {error && (
@@ -446,94 +506,100 @@ const VoteManager = () => {
                     </div>
                 )}
 
-                {/* Header */}
-                <div className="bg-white rounded-xl shadow-lg p-4 mb-4">
-                    <div className="text-center">
-                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-lg mb-4">
-                            <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                    <h1 className="text-lg sm:text-xl font-bold">Vote Management App</h1>
-                                    <p className="text-blue-100 text-sm">Track Support for Chirag Sir</p>
+                {/* Modern Header */}
+                <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 overflow-hidden relative">
+                    {/* Background Pattern */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700">
+                        <div className="absolute inset-0 bg-black bg-opacity-10"></div>
+                        <div className="absolute top-0 right-0 w-96 h-96 bg-white bg-opacity-10 rounded-full -translate-y-48 translate-x-48"></div>
+                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white bg-opacity-5 rounded-full translate-y-32 -translate-x-32"></div>
+                    </div>
+
+                    {/* Header Content */}
+                    <div className="relative z-10">
+                        {/* Top Bar */}
+                        <div className="flex items-center justify-between mb-6">
+                            <button
+                                onClick={() => setIsMenuOpen(true)}
+                                className="p-3 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-xl transition-all duration-200 backdrop-blur-sm"
+                            >
+                                <Menu className="w-6 h-6 text-white" />
+                            </button>
+
+                            {/* Status Indicators */}
+                            <div className="flex items-center space-x-4">
+                                {/* Connection Status */}
+                                <div className="flex items-center space-x-2 bg-white bg-opacity-20 px-3 py-2 rounded-lg backdrop-blur-sm">
+                                    {isOnline ? (
+                                        <>
+                                            <Wifi className="w-4 h-4 text-green-300" />
+                                            <span className="text-white text-sm font-medium">Online</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <WifiOff className="w-4 h-4 text-red-300" />
+                                            <span className="text-white text-sm font-medium">Offline</span>
+                                        </>
+                                    )}
                                 </div>
 
-                                {/* Connection Status & User Info */}
-                                <div className="flex items-center space-x-3">
-                                    {/* User Info */}
-                                    <div className="flex items-center space-x-2">
-                                        <div className="text-right">
-                                            <div className="text-xs text-blue-200">Logged in as</div>
-                                            <div className="text-sm font-medium text-white">{localStorage.getItem('voteManagerUser') || 'User'}</div>
-                                        </div>
-                                        <button
-                                            onClick={handleLogout}
-                                            className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
-                                            title="Logout"
-                                        >
-                                            <LogOut className="w-4 h-4" />
-                                        </button>
-                                    </div>
-
-                                    {/* Connection Status */}
-                                    <div className="flex items-center space-x-2">
-                                        {isOnline ? (
-                                            <div className="flex items-center space-x-1">
-                                                <Wifi className="w-4 h-4 text-green-300" />
-                                                <span className="text-xs text-green-300">Online</span>
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center space-x-1">
-                                                <WifiOff className="w-4 h-4 text-red-300" />
-                                                <span className="text-xs text-red-300">Offline</span>
-                                            </div>
-                                        )}
-
-                                        {isOnline && (
-                                            <button
-                                                onClick={syncData}
-                                                disabled={syncing || loading}
-                                                className="p-1 hover:bg-white hover:bg-opacity-20 rounded transition-colors"
-                                                title="Refresh Data"
-                                            >
-                                                <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
+                                {/* Sync Button */}
+                                {isOnline && (
+                                    <button
+                                        onClick={syncData}
+                                        disabled={syncing || loading}
+                                        className="p-3 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-xl transition-all duration-200 backdrop-blur-sm disabled:opacity-50"
+                                        title="Refresh Data"
+                                    >
+                                        <RefreshCw className={`w-5 h-5 text-white ${syncing ? 'animate-spin' : ''}`} />
+                                    </button>
+                                )}
                             </div>
                         </div>
 
-                        {/* Stats Cards */}
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
-                            <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                                <div className="flex items-center justify-center mb-1">
-                                    <Users className="w-5 h-5 text-blue-600" />
+                        {/* Title Section */}
+                        <div className="text-center text-white mb-8">
+                            <h1 className="text-3xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                                Vote Management
+                            </h1>
+                            <p className="text-blue-100 text-lg">Track Support for Chirag Sir</p>
+                            <div className="mt-4 text-sm text-blue-200">
+                                Welcome back, <span className="font-semibold text-white">{localStorage.getItem('voteManagerUser') || 'User'}</span>
+                            </div>
+                        </div>
+
+                        {/* Stats Cards - Modern Glass Morphism Design */}
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                            <div className="bg-white bg-opacity-10 backdrop-blur-md p-4 rounded-xl border border-white border-opacity-20 hover:bg-opacity-20 transition-all duration-300 shadow-lg">
+                                <div className="flex items-center justify-center mb-2">
+                                    <Users className="w-6 h-6 text-white" />
                                 </div>
-                                <div className="text-xl font-bold text-blue-700">{stats?.total || 0}</div>
-                                <div className="text-xs text-blue-600">Total</div>
+                                <div className="text-2xl font-bold text-white">{stats?.total || 0}</div>
+                                <div className="text-sm text-blue-100">Total Students</div>
                             </div>
 
-                            <div className="bg-green-50 p-3 rounded-lg border border-green-200">
-                                <div className="flex items-center justify-center mb-1">
-                                    <CheckCircle className="w-5 h-5 text-green-600" />
+                            <div className="bg-white bg-opacity-10 backdrop-blur-md p-4 rounded-xl border border-white border-opacity-20 hover:bg-opacity-20 transition-all duration-300 shadow-lg">
+                                <div className="flex items-center justify-center mb-2">
+                                    <CheckCircle className="w-6 h-6 text-green-300" />
                                 </div>
-                                <div className="text-xl font-bold text-green-700">{stats?.forChirag || 0}</div>
-                                <div className="text-xs text-green-600">Will Vote</div>
+                                <div className="text-2xl font-bold text-green-300">{stats?.forChirag || 0}</div>
+                                <div className="text-sm text-green-200">Will Vote</div>
                             </div>
 
-                            <div className="bg-red-50 p-3 rounded-lg border border-red-200">
-                                <div className="flex items-center justify-center mb-1">
-                                    <XCircle className="w-5 h-5 text-red-600" />
+                            <div className="bg-white bg-opacity-10 backdrop-blur-md p-4 rounded-xl border border-white border-opacity-20 hover:bg-opacity-20 transition-all duration-300 shadow-lg">
+                                <div className="flex items-center justify-center mb-2">
+                                    <XCircle className="w-6 h-6 text-red-300" />
                                 </div>
-                                <div className="text-xl font-bold text-red-700">{stats?.againstChirag || 0}</div>
-                                <div className="text-xs text-red-600">Won't Vote</div>
+                                <div className="text-2xl font-bold text-red-300">{stats?.againstChirag || 0}</div>
+                                <div className="text-sm text-red-200">Won't Vote</div>
                             </div>
 
-                            <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
-                                <div className="flex items-center justify-center mb-1">
-                                    <Clock className="w-5 h-5 text-yellow-600" />
+                            <div className="bg-white bg-opacity-10 backdrop-blur-md p-4 rounded-xl border border-white border-opacity-20 hover:bg-opacity-20 transition-all duration-300 shadow-lg">
+                                <div className="flex items-center justify-center mb-2">
+                                    <Clock className="w-6 h-6 text-yellow-300" />
                                 </div>
-                                <div className="text-xl font-bold text-yellow-700">{stats?.undecided || 0}</div>
-                                <div className="text-xs text-yellow-600">Undecided</div>
+                                <div className="text-2xl font-bold text-yellow-300">{stats?.undecided || 0}</div>
+                                <div className="text-sm text-yellow-200">Undecided</div>
                             </div>
                         </div>
                     </div>
@@ -713,17 +779,6 @@ const VoteManager = () => {
                             <span>Export CSV</span>
                         </button>
                     </div>
-                </div>
-
-                {/* Instructions */}
-                <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl p-4">
-                    <h3 className="font-semibold text-blue-800 mb-2 text-sm sm:text-base">How to Use:</h3>
-                    <ul className="text-xs sm:text-sm text-blue-700 space-y-1">
-                        <li>• Add student names and room numbers before going for canvassing</li>
-                        <li>• When asking for votes, update their support status</li>
-                        <li>• Track who will vote for Chirag Sir vs won't vote</li>
-                        <li>• Export data to analyze voting patterns and plan strategy</li>
-                    </ul>
                 </div>
             </div>
         </div>
