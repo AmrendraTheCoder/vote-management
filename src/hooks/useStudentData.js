@@ -2,11 +2,6 @@ import { useState, useEffect } from "react";
 import ApiService from "../services/api.js";
 
 const useStudentData = (isAuthenticated = false) => {
-  console.log(
-    "useStudentData hook initialized with isAuthenticated:",
-    isAuthenticated
-  );
-
   const [students, setStudents] = useState([]);
   const [stats, setStats] = useState({
     total: 0,

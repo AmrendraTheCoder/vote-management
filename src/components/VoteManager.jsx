@@ -276,15 +276,6 @@ const VoteManager = () => {
         );
     }
 
-    // Debug information
-    console.log('VoteManager render:', {
-        loading,
-        studentsLength: students.length,
-        error,
-        isAuthenticated,
-        isOnline
-    });
-
     // Main application
     return (
         <div className="min-h-screen bg-gray-50">
@@ -300,11 +291,6 @@ const VoteManager = () => {
 
             {/* Main Content */}
             <div className="container mx-auto px-4 py-6 space-y-6">
-                {/* Debug Info - Temporary */}
-                <div className="bg-yellow-100 border border-yellow-400 rounded-lg p-4 text-sm">
-                    <strong>Debug Info:</strong> Loading: {loading.toString()}, Students: {students.length}, Error: {error || 'none'}, Online: {isOnline.toString()}
-                </div>
-
                 {/* Initial Loading State - prominent */}
                 {loading && students.length === 0 && (
                     <div className="text-center py-20">

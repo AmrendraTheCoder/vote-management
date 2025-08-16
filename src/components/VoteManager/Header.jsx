@@ -86,16 +86,16 @@ const Header = ({
     return (
         <>
             {/* Header */}
-            <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 text-white shadow-lg sticky top-0 z-40">
+            <div className="bg-white border-b border-gray-200 text-gray-800 shadow-sm sticky top-0 z-40">
                 <div className="flex items-center justify-between p-4">
                     {/* Logo/Title */}
                     <div className="flex items-center space-x-3">
-                        <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-2">
-                            <Users className="w-5 h-5" />
+                        <div className="bg-gray-100 rounded-full p-2">
+                            <Users className="w-5 h-5 text-gray-600" />
                         </div>
                         <div>
                             <h1 className="text-xl font-bold">Vote Manager</h1>
-                            <p className="text-xs text-blue-100">Student Support Tracker</p>
+                            <p className="text-xs text-gray-500">Student Support Tracker</p>
                         </div>
                     </div>
 
@@ -103,8 +103,8 @@ const Header = ({
                     <div className="flex items-center space-x-3">
                         {/* Connection Status */}
                         <div className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${isOnline
-                                ? 'bg-green-100 bg-opacity-20 text-green-200'
-                                : 'bg-red-100 bg-opacity-20 text-red-200'
+                            ? 'bg-green-50 text-green-700'
+                            : 'bg-red-50 text-red-700'
                             }`}>
                             {syncing ? (
                                 <RefreshCw className="w-3 h-3 animate-spin" />
@@ -119,43 +119,43 @@ const Header = ({
                         </div>
 
                         {/* User Avatar */}
-                        <div className="flex items-center space-x-2 bg-white bg-opacity-10 backdrop-blur-sm rounded-full px-3 py-1">
-                            <User className="w-4 h-4" />
-                            <span className="text-sm font-medium">{user}</span>
+                        <div className="flex items-center space-x-2 bg-gray-100 rounded-full px-3 py-1">
+                            <User className="w-4 h-4 text-gray-600" />
+                            <span className="text-sm font-medium text-gray-700">{user}</span>
                         </div>
 
                         {/* Menu Button */}
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-2 hover:bg-opacity-30 transition-all duration-200"
+                            className="bg-gray-100 hover:bg-gray-200 rounded-full p-2 transition-all duration-200"
                         >
-                            {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                            {isMenuOpen ? <X className="w-5 h-5 text-gray-600" /> : <Menu className="w-5 h-5 text-gray-600" />}
                         </button>
                     </div>
                 </div>
 
                 {/* Quick Stats Bar */}
                 <div className="px-4 pb-3">
-                    <div className="flex justify-between items-center text-xs bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-2">
+                    <div className="flex justify-between items-center text-xs bg-gray-50 border rounded-lg p-2">
                         <div className="text-center">
-                            <div className="font-bold">{stats.total}</div>
-                            <div className="text-blue-100">Total</div>
+                            <div className="font-bold text-gray-800">{stats.total}</div>
+                            <div className="text-gray-500">Total</div>
                         </div>
                         <div className="text-center">
-                            <div className="font-bold text-green-300">{stats.yes}</div>
-                            <div className="text-blue-100">Yes</div>
+                            <div className="font-bold text-gray-800">{stats.yes}</div>
+                            <div className="text-gray-500">Yes</div>
                         </div>
                         <div className="text-center">
-                            <div className="font-bold text-red-300">{stats.no}</div>
-                            <div className="text-blue-100">No</div>
+                            <div className="font-bold text-gray-800">{stats.no}</div>
+                            <div className="text-gray-500">No</div>
                         </div>
                         <div className="text-center">
-                            <div className="font-bold text-yellow-300">{stats.undecided}</div>
-                            <div className="text-blue-100">Undecided</div>
+                            <div className="font-bold text-gray-800">{stats.undecided}</div>
+                            <div className="text-gray-500">Undecided</div>
                         </div>
                         <div className="text-center">
-                            <div className="font-bold text-gray-300">{stats.notAsked}</div>
-                            <div className="text-blue-100">Pending</div>
+                            <div className="font-bold text-gray-800">{stats.notAsked}</div>
+                            <div className="text-gray-500">Pending</div>
                         </div>
                     </div>
                 </div>
@@ -172,15 +172,15 @@ const Header = ({
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Menu Header */}
-                        <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6">
+                        <div className="bg-gray-800 text-white p-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h2 className="text-xl font-bold">Menu</h2>
-                                    <p className="text-sm text-blue-100">Manage your data</p>
+                                    <p className="text-sm text-gray-300">Manage your data</p>
                                 </div>
                                 <button
                                     onClick={() => setIsMenuOpen(false)}
-                                    className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-1"
+                                    className="text-white hover:bg-gray-700 rounded-full p-1"
                                 >
                                     <X className="w-6 h-6" />
                                 </button>
@@ -203,11 +203,11 @@ const Header = ({
                                     >
                                         <div className={`p-2 rounded-full ${item.disabled
                                             ? 'bg-gray-200'
-                                            : 'bg-blue-100'
+                                            : 'bg-gray-100'
                                             }`}>
                                             <IconComponent className={`w-5 h-5 ${item.disabled
                                                 ? 'text-gray-400'
-                                                : 'text-blue-600'
+                                                : 'text-gray-600'
                                                 }`} />
                                         </div>
                                         <span className="font-medium">{item.label}</span>
@@ -220,25 +220,25 @@ const Header = ({
                         <div className="p-4 mt-6 border-t border-gray-200">
                             <h3 className="text-lg font-semibold text-gray-800 mb-4">Statistics Overview</h3>
                             <div className="space-y-3">
-                                <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                                    <span className="text-green-700 font-medium">Will Vote</span>
-                                    <span className="text-green-800 font-bold">{stats.yes}</span>
+                                <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                    <span className="text-gray-700 font-medium">Will Vote</span>
+                                    <span className="text-gray-800 font-bold">{stats.yes}</span>
                                 </div>
-                                <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
-                                    <span className="text-red-700 font-medium">Won't Vote</span>
-                                    <span className="text-red-800 font-bold">{stats.no}</span>
+                                <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                    <span className="text-gray-700 font-medium">Won't Vote</span>
+                                    <span className="text-gray-800 font-bold">{stats.no}</span>
                                 </div>
-                                <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
-                                    <span className="text-yellow-700 font-medium">Undecided</span>
-                                    <span className="text-yellow-800 font-bold">{stats.undecided}</span>
+                                <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                    <span className="text-gray-700 font-medium">Undecided</span>
+                                    <span className="text-gray-800 font-bold">{stats.undecided}</span>
                                 </div>
                                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                                     <span className="text-gray-700 font-medium">Not Asked</span>
                                     <span className="text-gray-800 font-bold">{stats.notAsked}</span>
                                 </div>
-                                <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
-                                    <span className="text-orange-700 font-medium">Absent</span>
-                                    <span className="text-orange-800 font-bold">{stats.absent}</span>
+                                <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                    <span className="text-gray-700 font-medium">Absent</span>
+                                    <span className="text-gray-800 font-bold">{stats.absent}</span>
                                 </div>
                             </div>
                         </div>
