@@ -135,8 +135,8 @@ const VoteManager = () => {
                     roomNumber: studentToUpdate.roomNumber,
                     vote: studentToUpdate.vote
                 });
-            } catch (error) {
-                console.error('Error updating student:', error);
+            } catch (err) {
+                console.error('Error updating student:', err);
                 // Don't show error for individual field updates
             }
         }
@@ -150,7 +150,7 @@ const VoteManager = () => {
             await loadStudents();
             setError(null);
         } catch (error) {
-            setError('Failed to sync data');
+            setError('Failed to sync data', error);
         } finally {
             setSyncing(false);
         }

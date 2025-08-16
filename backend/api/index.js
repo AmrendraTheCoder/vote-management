@@ -53,7 +53,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/students", studentRoutes);
 
 // Global error handler
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   console.error("Error:", err);
   res.status(err.status || 500).json({
     success: false,
