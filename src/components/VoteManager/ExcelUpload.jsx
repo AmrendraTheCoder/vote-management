@@ -1,11 +1,25 @@
 import React, { useState } from 'react';
 import { Upload, FileSpreadsheet, AlertCircle, CheckCircle, X } from 'lucide-react';
 
-const ExcelUpload = ({ onUpload, onClose }) => {
+const ExcelUpload = ({ isOpen, onUpload, onClose }) => {
     const [dragActive, setDragActive] = useState(false);
     const [processing, setProcessing] = useState(false);
     const [uploadResult, setUploadResult] = useState(null);
     const [previewData, setPreviewData] = useState([]);
+
+    if (!isOpen) return null;
+
+    const resetModalState = () => {
+        setDragActive(false);
+        setProcessing(false);
+        setUploadResult(null);
+        setPreviewData([]);
+    };
+
+    const handleClose = () => {
+        resetModalState();
+        onClose();
+    };
 
     const handleDrag = (e) => {
         e.preventDefault();
@@ -173,8 +187,14 @@ const ExcelUpload = ({ onUpload, onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 animate-in fade-in-0 zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto">
+        <div 
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+            onClick={handleClose}
+        >
+            <div 
+                className="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 animate-in fade-in-0 zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto"
+                onClick={(e) => e.stopPropagation()}
+            >
                 <div className="p-6">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-6">
@@ -185,7 +205,7 @@ const ExcelUpload = ({ onUpload, onClose }) => {
                             <h3 className="text-xl font-semibold text-gray-900">Upload Excel File</h3>
                         </div>
                         <button
-                            onClick={onClose}
+                            onClick={handleClose}
                             className="text-gray-400 hover:text-gray-600 p-1"
                         >
                             <X className="w-6 h-6" />
@@ -297,7 +317,7 @@ const ExcelUpload = ({ onUpload, onClose }) => {
                     {/* Actions */}
                     <div className="flex justify-end space-x-3 mt-6">
                         <button
-                            onClick={onClose}
+                            onClick={handleClose}
                             className="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors duration-200"
                         >
                             Cancel

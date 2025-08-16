@@ -55,35 +55,18 @@ const useStudentData = (isAuthenticated = false) => {
       setSyncing(true);
       setError(null);
 
-      // Add students one by one with duplicate checking
-      const addedStudents = [];
-      const errors = [];
-
-      for (const studentData of studentsData) {
-        try {
-          const response = await ApiService.addStudent(studentData);
-          if (response.success) {
-            addedStudents.push(response.data);
-          } else {
-            errors.push(`${studentData.name}: ${response.message}`);
-          }
-        } catch (error) {
-          errors.push(`${studentData.name}: ${error.message}`);
-        }
-      }
-
-      if (addedStudents.length > 0) {
-        // Refresh the full list
+      // Use the bulk API endpoint for better performance
+      const response = await ApiService.createBulkStudents(studentsData);
+      
+      if (response.success) {
+        // Refresh the full list after successful bulk addition
         await loadStudents(true);
+      } else {
+        throw new Error(response.message || 'Failed to add students in bulk');
       }
 
-      if (errors.length > 0) {
-        throw new Error(
-          `Some students could not be added: ${errors.join(", ")}`
-        );
-      }
     } catch (error) {
-      console.error("Error in bulk add:", error);
+      console.error('Error in bulk add:', error);
       throw error;
     } finally {
       setSyncing(false);

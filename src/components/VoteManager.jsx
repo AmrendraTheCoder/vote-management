@@ -332,13 +332,24 @@ const VoteManager = () => {
                 {!loading && (
                     <div className="flex justify-between items-center">
                         <h2 className="text-2xl font-bold text-gray-900">Students Management</h2>
-                        <button
-                            onClick={handleAddStudent}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
-                        >
-                            <Plus className="w-5 h-5" />
-                            <span>Add Student</span>
-                        </button>
+                        <div className="flex space-x-3">
+                            <button
+                                onClick={() => setShowExcelUpload(true)}
+                                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                </svg>
+                                <span>Upload Excel</span>
+                            </button>
+                            <button
+                                onClick={handleAddStudent}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+                            >
+                                <Plus className="w-5 h-5" />
+                                <span>Add Student</span>
+                            </button>
+                        </div>
                     </div>
                 )}
 
@@ -363,25 +374,59 @@ const VoteManager = () => {
                 {/* Students Display */}
                 {!loading && (
                     <>
-                        {isMobile ? (
-                            <MobileStudentsList
-                                students={filteredAndSortedStudents}
-                                onEdit={handleEditStudent}
-                                onDelete={handleDeleteStudent}
-                                onVoteChange={handleVoteChange}
-                                onMove={handleMoveStudent}
-                            />
+                        {students.length === 0 ? (
+                            <div className="text-center py-12">
+                                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+                                    <div className="mx-auto mb-4 w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                                        </svg>
+                                    </div>
+                                    <h3 className="text-lg font-medium text-gray-900 mb-2">No students found</h3>
+                                    <p className="text-gray-600 mb-6">Get started by adding students individually or uploading an Excel file.</p>
+                                    <div className="flex justify-center space-x-4">
+                                        <button
+                                            onClick={handleAddStudent}
+                                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+                                        >
+                                            <Plus className="w-5 h-5" />
+                                            <span>Add Student</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setShowExcelUpload(true)}
+                                            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+                                        >
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                            </svg>
+                                            <span>Upload Excel</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         ) : (
-                            <StudentsTable
-                                students={filteredAndSortedStudents}
-                                onEdit={handleEditStudent}
-                                onDelete={handleDeleteStudent}
-                                onVoteChange={handleVoteChange}
-                                onMove={handleMoveStudent}
-                                sortField={sortField}
-                                sortDirection={sortDirection}
-                                onSort={handleSort}
-                            />
+                            <>
+                                {isMobile ? (
+                                    <MobileStudentsList
+                                        students={filteredAndSortedStudents}
+                                        onEdit={handleEditStudent}
+                                        onDelete={handleDeleteStudent}
+                                        onVoteChange={handleVoteChange}
+                                        onMove={handleMoveStudent}
+                                    />
+                                ) : (
+                                    <StudentsTable
+                                        students={filteredAndSortedStudents}
+                                        onEdit={handleEditStudent}
+                                        onDelete={handleDeleteStudent}
+                                        onVoteChange={handleVoteChange}
+                                        onMove={handleMoveStudent}
+                                        sortField={sortField}
+                                        sortDirection={sortDirection}
+                                        onSort={handleSort}
+                                    />
+                                )}
+                            </>
                         )}
                     </>
                 )}
