@@ -17,13 +17,19 @@ import ErrorPopup from './VoteManager/ErrorPopup';
 
 const VoteManager = () => {
     // Authentication hook
-    const { 
-        isAuthenticated, 
-        user, 
-        login, 
-        logout, 
-        loginError, 
-        loginLoading 
+    const {
+        isAuthenticated,
+        user,
+        loginId,
+        setLoginId,
+        password,
+        setPassword,
+        showPassword,
+        setShowPassword,
+        login,
+        logout,
+        loginError,
+        loginLoading
     } = useAuth();
 
     // Student data hook
@@ -31,6 +37,8 @@ const VoteManager = () => {
         students,
         loading,
         error,
+        isOnline,
+        syncing,
         addStudent,
         updateStudent,
         deleteStudent,
@@ -44,24 +52,19 @@ const VoteManager = () => {
     const [showStudentForm, setShowStudentForm] = useState(false);
     const [showExcelUpload, setShowExcelUpload] = useState(false);
     const [editingStudent, setEditingStudent] = useState(null);
-    
+
     // Filter states
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedHostel, setSelectedHostel] = useState('all');
     const [selectedVote, setSelectedVote] = useState('all');
-    
+
     // Sort states
     const [sortField, setSortField] = useState('name');
     const [sortDirection, setSortDirection] = useState('asc');
-    
+
     // Dialog states
     const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, studentId: null, studentName: '' });
     const [errorPopup, setErrorPopup] = useState({ isVisible: false, message: '', type: 'error' });
-
-    // Login states
-    const [loginId, setLoginId] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
 
     // Responsive design listener
     React.useEffect(() => {
@@ -75,13 +78,13 @@ const VoteManager = () => {
     // Filter and sort students
     const filteredAndSortedStudents = React.useMemo(() => {
         let filtered = students.filter(student => {
-            const matchesSearch = !searchTerm || 
+            const matchesSearch = !searchTerm ||
                 student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 student.roomNumber.toLowerCase().includes(searchTerm.toLowerCase());
-            
+
             const matchesHostel = selectedHostel === 'all' || student.hostel === selectedHostel;
             const matchesVote = selectedVote === 'all' || student.vote === selectedVote;
-            
+
             return matchesSearch && matchesHostel && matchesVote;
         });
 
@@ -89,13 +92,13 @@ const VoteManager = () => {
         filtered.sort((a, b) => {
             let aValue = a[sortField] || '';
             let bValue = b[sortField] || '';
-            
+
             if (sortField === 'roomNumber') {
                 // Natural sorting for room numbers
                 aValue = aValue.toString();
                 bValue = bValue.toString();
             }
-            
+
             if (sortDirection === 'asc') {
                 return aValue.localeCompare(bValue, undefined, { numeric: true });
             } else {
@@ -107,11 +110,6 @@ const VoteManager = () => {
     }, [students, searchTerm, selectedHostel, selectedVote, sortField, sortDirection]);
 
     // Event handlers
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        await login(loginId, password);
-    };
-
     const handleAddStudent = () => {
         setEditingStudent(null);
         setShowStudentForm(true);
@@ -221,7 +219,7 @@ const VoteManager = () => {
                         <p className="text-gray-600 mt-2">Student Support Tracking System</p>
                     </div>
 
-                    <form onSubmit={handleLogin} className="space-y-6">
+                    <form onSubmit={login} className="space-y-6">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 User ID
@@ -281,21 +279,39 @@ const VoteManager = () => {
     // Main application
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Header */}
+            {/* Header - always show when authenticated */}
             <Header
                 user={user}
                 onLogout={logout}
                 studentsData={students}
                 onShowExcelUpload={() => setShowExcelUpload(true)}
+                isOnline={isOnline}
+                syncing={syncing}
             />
 
             {/* Main Content */}
             <div className="container mx-auto px-4 py-6 space-y-6">
-                {/* Loading State */}
-                {loading && (
-                    <div className="text-center py-12">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                        <p className="text-gray-600">Loading students...</p>
+                {/* Initial Loading State - prominent */}
+                {loading && students.length === 0 && (
+                    <div className="text-center py-20">
+                        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto">
+                            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-6"></div>
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2">Fetching Student Data</h3>
+                            <p className="text-gray-600">Please wait while we load the student information...</p>
+                            <div className="mt-4 bg-gray-200 rounded-full h-2 overflow-hidden">
+                                <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Refreshing Loading State - smaller */}
+                {loading && students.length > 0 && (
+                    <div className="text-center py-4">
+                        <div className="inline-flex items-center bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                            <p className="text-blue-700 text-sm">Refreshing data...</p>
+                        </div>
                     </div>
                 )}
 

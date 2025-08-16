@@ -19,8 +19,12 @@ const useAuth = () => {
 
   useEffect(() => {
     const authStatus = localStorage.getItem("voteManagerAuth");
+    const savedUser = localStorage.getItem("voteManagerUser");
     if (authStatus === "true") {
       setIsAuthenticated(true);
+      if (savedUser) {
+        setLoginId(savedUser);
+      }
     }
   }, []);
 
@@ -53,6 +57,7 @@ const useAuth = () => {
 
   return {
     isAuthenticated,
+    user: loginId, // Add user property
     loginId,
     setLoginId,
     password,
@@ -61,6 +66,8 @@ const useAuth = () => {
     setShowPassword,
     loginError,
     loginLoading,
+    login: handleLogin, // Add login alias
+    logout: handleLogout, // Add logout alias
     handleLogin,
     handleLogout,
   };

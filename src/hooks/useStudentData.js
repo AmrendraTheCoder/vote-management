@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import ApiService from "../services/api.js";
 
-const useStudentData = () => {
+const useStudentData = (isAuthenticated = false) => {
   const [students, setStudents] = useState([]);
   const [stats, setStats] = useState({
     total: 0,
@@ -20,8 +20,74 @@ const useStudentData = () => {
 
   const CACHE_DURATION = 30000; // 30 seconds cache
 
-  const saveToLocalStorage = (studentsData) => {
-    localStorage.setItem("voteManagerStudents", JSON.stringify(studentsData));
+  const moveStudent = async (studentId, direction) => {
+    try {
+      const studentIndex = students.findIndex((s) => s._id === studentId);
+      if (studentIndex === -1) return;
+
+      const newStudents = [...students];
+
+      if (direction === "up" && studentIndex > 0) {
+        [newStudents[studentIndex], newStudents[studentIndex - 1]] = [
+          newStudents[studentIndex - 1],
+          newStudents[studentIndex],
+        ];
+      } else if (direction === "down" && studentIndex < students.length - 1) {
+        [newStudents[studentIndex], newStudents[studentIndex + 1]] = [
+          newStudents[studentIndex + 1],
+          newStudents[studentIndex],
+        ];
+      } else {
+        return; // No movement needed
+      }
+
+      setStudents(newStudents);
+      updateStatsLocal(newStudents);
+      saveToLocalStorage(newStudents);
+    } catch (error) {
+      console.error("Error moving student:", error);
+      throw new Error("Failed to move student");
+    }
+  };
+
+  const bulkAddStudents = async (studentsData) => {
+    try {
+      setSyncing(true);
+      setError(null);
+
+      // Add students one by one with duplicate checking
+      const addedStudents = [];
+      const errors = [];
+
+      for (const studentData of studentsData) {
+        try {
+          const response = await ApiService.addStudent(studentData);
+          if (response.success) {
+            addedStudents.push(response.data);
+          } else {
+            errors.push(`${studentData.name}: ${response.message}`);
+          }
+        } catch (error) {
+          errors.push(`${studentData.name}: ${error.message}`);
+        }
+      }
+
+      if (addedStudents.length > 0) {
+        // Refresh the full list
+        await loadStudents(true);
+      }
+
+      if (errors.length > 0) {
+        throw new Error(
+          `Some students could not be added: ${errors.join(", ")}`
+        );
+      }
+    } catch (error) {
+      console.error("Error in bulk add:", error);
+      throw error;
+    } finally {
+      setSyncing(false);
+    }
   };
 
   const updateStatsLocal = (studentsData) => {
@@ -225,6 +291,20 @@ const useStudentData = () => {
     }
   };
 
+  const saveToLocalStorage = (studentsData) => {
+    localStorage.setItem("voteManagerStudents", JSON.stringify(studentsData));
+  };
+
+  // Load students when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadStudents();
+    } else {
+      setLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
+
   // Online/offline event listeners
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -254,8 +334,12 @@ const useStudentData = () => {
     isOnline,
     loadStudents,
     addStudent,
+    deleteStudent: removeStudent, // Alias for consistency
     removeStudent,
     updateStudent,
+    moveStudent,
+    bulkAddStudents,
+    refreshData: loadStudents, // Alias for refreshing data
     syncData,
     updateStatsLocal,
     saveToLocalStorage,
