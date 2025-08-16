@@ -68,15 +68,6 @@ const MobileStudentCard = ({
         }
     };
 
-    const handleVoteChange = async (newVote) => {
-        setIsChangingVote(true);
-        try {
-            await onVoteChange(student._id, newVote);
-        } finally {
-            setIsChangingVote(false);
-        }
-    };
-
     const handleMove = async (direction) => {
         setMovingDirection(direction);
         try {
@@ -216,7 +207,6 @@ const MobileStudentsList = ({
     students,
     onEdit,
     onDelete,
-    onVoteChange,
     onMove
 }) => {
     if (students.length === 0) {
@@ -239,7 +229,6 @@ const MobileStudentsList = ({
                     totalStudents={students.length}
                     onEdit={onEdit}
                     onDelete={onDelete}
-                    onVoteChange={onVoteChange}
                     onMove={onMove}
                 />
             ))}
