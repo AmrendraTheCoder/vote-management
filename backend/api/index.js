@@ -44,7 +44,7 @@ app.get("/", (req, res) => {
     endpoints: {
       health: "/api/health",
       students: "/api/students",
-      stats: "/api/students/stats"
+      stats: "/api/students/stats",
     },
     documentation: "Available endpoints listed above",
     timestamp: new Date().toISOString(),

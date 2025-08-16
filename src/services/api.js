@@ -1,5 +1,6 @@
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "https://vote-management-alpha.vercel.app/api";
+  import.meta.env.VITE_API_URL ||
+  "https://vote-management-alpha.vercel.app/api";
 
 class ApiService {
   constructor() {
@@ -46,7 +47,7 @@ class ApiService {
         );
       }
 
-      return { success: true, data };
+      return data; // Return the parsed data directly
     } catch (error) {
       console.error("API request failed:", error);
       return {
@@ -55,7 +56,9 @@ class ApiService {
         message: error.message,
       };
     }
-  } // Student API methods
+  }
+
+  // Student API methods
   async getStudents() {
     return this.makeRequest("/students");
   }
