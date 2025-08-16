@@ -23,6 +23,21 @@
 - [ ] Verify `.env` file is NOT committed
 - [ ] Ensure all required files are included
 
+**Git Setup Commands:**
+```bash
+cd backend
+git init
+git add .
+git commit -m "Backend ready for Vercel deployment"
+
+# Remove existing origin if it exists
+git remote remove origin
+
+# Add the correct origin
+git remote add origin https://github.com/AmrendraTheCoder/vote-management.git
+git push -u origin main
+```
+
 ## 🔧 Vercel Deployment Steps
 
 ### 1. Create Vercel Project
