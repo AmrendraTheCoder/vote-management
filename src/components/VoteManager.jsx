@@ -52,7 +52,7 @@ const VoteManager = () => {
         return () => {
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('offline', handleOffline);
-            
+
             // Clean up any pending timers
             Object.values(updateTimers).forEach(timer => {
                 if (timer) clearTimeout(timer);
@@ -102,7 +102,7 @@ const VoteManager = () => {
         try {
             setLoading(true);
             setError(null);
-            
+
             console.log('Fetching students from API...');
             const response = await ApiService.getStudents();
 
@@ -170,7 +170,7 @@ const VoteManager = () => {
                     setStudents(prev => [...prev, newStudentData]);
                     updateStatsLocal([...students, newStudentData]);
                     saveToLocalStorage([...students, newStudentData]);
-                    
+
                     // Invalidate cache for next fetch
                     setLastFetch(null);
                     console.log('Student created successfully');
@@ -215,10 +215,10 @@ const VoteManager = () => {
                 setStudents(updatedStudents);
                 updateStatsLocal(updatedStudents);
                 saveToLocalStorage(updatedStudents);
-                
+
                 // Then make API call
                 await ApiService.deleteStudent(id);
-                
+
                 // Invalidate cache
                 setLastFetch(null);
             } else {
@@ -270,7 +270,7 @@ const VoteManager = () => {
                     console.error('Error updating student:', err);
                     // Optionally show a subtle error indicator
                 }
-                
+
                 // Clean up timer
                 setUpdateTimers(prev => {
                     const newTimers = { ...prev };
