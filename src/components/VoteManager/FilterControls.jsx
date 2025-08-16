@@ -1,10 +1,10 @@
 import React from 'react';
-import { 
-    Search, 
-    Filter, 
-    X, 
-    SortAsc, 
-    Users, 
+import {
+    Search,
+    Filter,
+    X,
+    SortAsc,
+    Users,
     Building,
     CheckCircle,
     XCircle,
@@ -12,8 +12,8 @@ import {
     UserMinus
 } from 'lucide-react';
 
-const FilterControls = ({ 
-    searchTerm, 
+const FilterControls = ({
+    searchTerm,
     onSearchChange,
     selectedHostel,
     onHostelChange,
@@ -24,7 +24,7 @@ const FilterControls = ({
     onSort,
     totalStudents,
     filteredCount,
-    isMobile = false 
+    isMobile = false
 }) => {
     const clearFilters = () => {
         onSearchChange('');
@@ -165,7 +165,7 @@ const FilterControls = ({
                             <span className="font-medium text-gray-900">{totalStudents}</span> students
                         </span>
                     </div>
-                    
+
                     {hasActiveFilters && (
                         <div className="flex items-center space-x-2">
                             <span className="text-blue-600 text-xs">Filters active:</span>

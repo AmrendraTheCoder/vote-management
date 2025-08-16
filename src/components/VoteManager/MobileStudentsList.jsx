@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { 
-    Edit, 
-    Trash2, 
-    ChevronUp, 
+import {
+    Edit,
+    Trash2,
+    ChevronUp,
     ChevronDown,
     Building,
     Home,
@@ -13,14 +13,14 @@ import {
     UserMinus
 } from 'lucide-react';
 
-const MobileStudentCard = ({ 
-    student, 
-    index, 
+const MobileStudentCard = ({
+    student,
+    index,
     totalStudents,
-    onEdit, 
-    onDelete, 
-    onVoteChange, 
-    onMove 
+    onEdit,
+    onDelete,
+    onVoteChange,
+    onMove
 }) => {
     const [isChangingVote, setIsChangingVote] = useState(false);
     const [movingDirection, setMovingDirection] = useState(null);
@@ -100,7 +100,7 @@ const MobileStudentCard = ({
                         </button>
                     </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                     <button
                         onClick={() => onEdit(student)}
@@ -150,11 +150,10 @@ const MobileStudentCard = ({
                     </div>
                     <div>
                         <p className="text-sm text-gray-500">Hostel</p>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            student.hostel === 'GH' 
-                                ? 'bg-pink-100 text-pink-800' 
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${student.hostel === 'GH'
+                                ? 'bg-pink-100 text-pink-800'
                                 : 'bg-blue-100 text-blue-800'
-                        }`}>
+                            }`}>
                             {student.hostel}
                         </span>
                     </div>
@@ -173,9 +172,8 @@ const MobileStudentCard = ({
                             value={student.vote || ''}
                             onChange={(e) => handleVoteChange(e.target.value)}
                             disabled={isChangingVote}
-                            className={`text-sm border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors min-w-[140px] ${getVoteColor(student.vote)} ${
-                                isChangingVote ? 'opacity-50 cursor-not-allowed' : ''
-                            }`}
+                            className={`text-sm border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors min-w-[140px] ${getVoteColor(student.vote)} ${isChangingVote ? 'opacity-50 cursor-not-allowed' : ''
+                                }`}
                         >
                             <option value="">Not Asked</option>
                             <option value="Yes">Will Vote</option>
@@ -207,12 +205,12 @@ const MobileStudentCard = ({
     );
 };
 
-const MobileStudentsList = ({ 
-    students, 
-    onEdit, 
-    onDelete, 
-    onVoteChange, 
-    onMove 
+const MobileStudentsList = ({
+    students,
+    onEdit,
+    onDelete,
+    onVoteChange,
+    onMove
 }) => {
     if (students.length === 0) {
         return (

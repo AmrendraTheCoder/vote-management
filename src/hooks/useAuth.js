@@ -1,69 +1,69 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 const useAuth = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [loginId, setLoginId] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [loginError, setLoginError] = useState('');
-    const [loginLoading, setLoginLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loginId, setLoginId] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
 
-    // Hardcoded credentials (in production, this should be handled by backend)
-    const validCredentials = {
-        'admin': 'admin123',
-        'chirag': 'chirag@vote2024',
-        'manager': 'vote_manager_2024',
-        'coordinator': 'coordinator@123',
-        'viva24': 'viva_city'
-    };
+  // Hardcoded credentials (in production, this should be handled by backend)
+  const validCredentials = {
+    admin: "admin123",
+    chirag: "chirag@vote2024",
+    manager: "vote_manager_2024",
+    coordinator: "coordinator@123",
+    viva24: "viva_city",
+  };
 
-    useEffect(() => {
-        const authStatus = localStorage.getItem('voteManagerAuth');
-        if (authStatus === 'true') {
-            setIsAuthenticated(true);
-        }
-    }, []);
+  useEffect(() => {
+    const authStatus = localStorage.getItem("voteManagerAuth");
+    if (authStatus === "true") {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        setLoginLoading(true);
-        setLoginError('');
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoginLoading(true);
+    setLoginError("");
 
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+    // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        if (validCredentials[loginId] && validCredentials[loginId] === password) {
-            setIsAuthenticated(true);
-            localStorage.setItem('voteManagerAuth', 'true');
-            localStorage.setItem('voteManagerUser', loginId);
-        } else {
-            setLoginError('Invalid ID or password. Please try again.');
-        }
+    if (validCredentials[loginId] && validCredentials[loginId] === password) {
+      setIsAuthenticated(true);
+      localStorage.setItem("voteManagerAuth", "true");
+      localStorage.setItem("voteManagerUser", loginId);
+    } else {
+      setLoginError("Invalid ID or password. Please try again.");
+    }
 
-        setLoginLoading(false);
-    };
+    setLoginLoading(false);
+  };
 
-    const handleLogout = () => {
-        setIsAuthenticated(false);
-        localStorage.removeItem('voteManagerAuth');
-        localStorage.removeItem('voteManagerUser');
-        setLoginId('');
-        setPassword('');
-    };
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem("voteManagerAuth");
+    localStorage.removeItem("voteManagerUser");
+    setLoginId("");
+    setPassword("");
+  };
 
-    return {
-        isAuthenticated,
-        loginId,
-        setLoginId,
-        password,
-        setPassword,
-        showPassword,
-        setShowPassword,
-        loginError,
-        loginLoading,
-        handleLogin,
-        handleLogout
-    };
+  return {
+    isAuthenticated,
+    loginId,
+    setLoginId,
+    password,
+    setPassword,
+    showPassword,
+    setShowPassword,
+    loginError,
+    loginLoading,
+    handleLogin,
+    handleLogout,
+  };
 };
 
-export default useAuth;
+export { useAuth };

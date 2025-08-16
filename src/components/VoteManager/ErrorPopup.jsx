@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { AlertCircle, CheckCircle, Info, X } from 'lucide-react';
 
-const ErrorPopup = ({ 
-    isVisible, 
-    message, 
+const ErrorPopup = ({
+    isVisible,
+    message,
     type = 'error', // 'error', 'success', 'info', 'warning'
-    duration = 5000, 
-    onClose 
+    duration = 5000,
+    onClose
 }) => {
     useEffect(() => {
         if (isVisible && duration > 0) {
@@ -83,17 +83,16 @@ const ErrorPopup = ({
                         <X className="w-4 h-4" />
                     </button>
                 </div>
-                
+
                 {/* Progress bar for duration */}
                 {duration > 0 && (
                     <div className="mt-3 h-1 bg-gray-200 rounded-full overflow-hidden">
-                        <div 
-                            className={`h-full ${
-                                type === 'success' ? 'bg-green-500' :
-                                type === 'info' ? 'bg-blue-500' :
-                                type === 'warning' ? 'bg-yellow-500' :
-                                'bg-red-500'
-                            } transition-all ease-linear`}
+                        <div
+                            className={`h-full ${type === 'success' ? 'bg-green-500' :
+                                    type === 'info' ? 'bg-blue-500' :
+                                        type === 'warning' ? 'bg-yellow-500' :
+                                            'bg-red-500'
+                                } transition-all ease-linear`}
                             style={{
                                 width: '100%',
                                 animation: `shrink ${duration}ms linear forwards`
@@ -102,7 +101,7 @@ const ErrorPopup = ({
                     </div>
                 )}
             </div>
-            
+
             <style jsx>{`
                 @keyframes shrink {
                     from { width: 100%; }

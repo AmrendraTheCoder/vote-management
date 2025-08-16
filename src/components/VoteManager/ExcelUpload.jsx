@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Upload, FileSpreadsheet, AlertCircle, CheckCircle, X } from 'lucide-react';
-import * as XLSX from 'xlsx';
 
 const ExcelUpload = ({ onUpload, onClose }) => {
     const [dragActive, setDragActive] = useState(false);
@@ -22,7 +21,7 @@ const ExcelUpload = ({ onUpload, onClose }) => {
         e.preventDefault();
         e.stopPropagation();
         setDragActive(false);
-        
+
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
             handleFile(e.dataTransfer.files[0]);
         }
@@ -47,6 +46,12 @@ const ExcelUpload = ({ onUpload, onClose }) => {
         setUploadResult(null);
 
         try {
+            // Check if XLSX library is available
+            const XLSX = await import('xlsx').catch(() => null);
+            if (!XLSX) {
+                throw new Error('Excel processing library not available. Please use CSV format.');
+            }
+
             const data = await file.arrayBuffer();
             const workbook = XLSX.read(data);
             const sheetName = workbook.SheetNames[0];
@@ -60,7 +65,7 @@ const ExcelUpload = ({ onUpload, onClose }) => {
             // Validate and transform data
             const validatedData = validateAndTransformData(jsonData);
             setPreviewData(validatedData.slice(0, 5)); // Show first 5 rows as preview
-            
+
             setUploadResult({
                 success: true,
                 message: `Successfully processed ${validatedData.length} students.`,
@@ -161,7 +166,7 @@ const ExcelUpload = ({ onUpload, onClose }) => {
     const getColumnFormatExample = () => {
         return {
             'Student Name': 'John Doe',
-            'Room Number': 'A-101', 
+            'Room Number': 'A-101',
             'Hostel': 'BH',
             'Support Status': 'Yes'
         };
@@ -203,11 +208,10 @@ const ExcelUpload = ({ onUpload, onClose }) => {
 
                     {/* Upload Area */}
                     <div
-                        className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                            dragActive 
-                                ? 'border-blue-500 bg-blue-50' 
+                        className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${dragActive
+                                ? 'border-blue-500 bg-blue-50'
                                 : 'border-gray-300 hover:border-gray-400'
-                        }`}
+                            }`}
                         onDragEnter={handleDrag}
                         onDragLeave={handleDrag}
                         onDragOver={handleDrag}

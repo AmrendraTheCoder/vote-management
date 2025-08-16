@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Save, X, User, Home, Building } from 'lucide-react';
 
-const StudentForm = ({ 
-    isOpen, 
-    onClose, 
-    onSave, 
-    editingStudent, 
-    existingStudents = [] 
+const StudentForm = ({
+    isOpen,
+    onClose,
+    onSave,
+    editingStudent,
+    existingStudents = []
 }) => {
     const [formData, setFormData] = useState({
         name: '',
@@ -52,11 +52,11 @@ const StudentForm = ({
         }
 
         // Check for duplicates (only for new students or if name/room changed)
-        if (!editingStudent || 
-            editingStudent.name !== formData.name.trim() || 
+        if (!editingStudent ||
+            editingStudent.name !== formData.name.trim() ||
             editingStudent.roomNumber !== formData.roomNumber.trim()) {
-            
-            const duplicate = existingStudents.find(student => 
+
+            const duplicate = existingStudents.find(student =>
                 student.name.toLowerCase() === formData.name.trim().toLowerCase() &&
                 student.roomNumber.toLowerCase() === formData.roomNumber.trim().toLowerCase() &&
                 student.hostel === formData.hostel
@@ -73,7 +73,7 @@ const StudentForm = ({
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!validateForm()) {
             return;
         }
@@ -160,9 +160,8 @@ const StudentForm = ({
                                 type="text"
                                 value={formData.name}
                                 onChange={(e) => handleInputChange('name', e.target.value)}
-                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                                    errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                }`}
+                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                    }`}
                                 placeholder="Enter student name"
                                 autoComplete="name"
                             />
@@ -182,9 +181,8 @@ const StudentForm = ({
                                     type="text"
                                     value={formData.roomNumber}
                                     onChange={(e) => handleInputChange('roomNumber', e.target.value)}
-                                    className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                                        errors.roomNumber ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                    }`}
+                                    className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${errors.roomNumber ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                        }`}
                                     placeholder="e.g., A-101"
                                 />
                             </div>

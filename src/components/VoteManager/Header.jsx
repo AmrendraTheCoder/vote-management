@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Menu, X, Users, BarChart3, Download, Upload, LogOut, User } from 'lucide-react';
 
-const Header = ({ 
-    user, 
-    onLogout, 
-    studentsData, 
+const Header = ({
+    user,
+    onLogout,
+    studentsData,
     onShowExcelUpload
 }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -144,11 +144,11 @@ const Header = ({
 
             {/* Slide Menu Overlay */}
             {isMenuOpen && (
-                <div 
+                <div
                     className="fixed inset-0 bg-black bg-opacity-50 z-50"
                     onClick={() => setIsMenuOpen(false)}
                 >
-                    <div 
+                    <div
                         className="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out"
                         onClick={(e) => e.stopPropagation()}
                     >
@@ -177,22 +177,19 @@ const Header = ({
                                         key={index}
                                         onClick={item.action}
                                         disabled={item.disabled}
-                                        className={`w-full flex items-center space-x-3 p-4 rounded-xl transition-all duration-200 ${
-                                            item.disabled 
-                                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                                        className={`w-full flex items-center space-x-3 p-4 rounded-xl transition-all duration-200 ${item.disabled
+                                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                                 : 'bg-gray-50 hover:bg-gray-100 text-gray-700 hover:text-gray-900'
-                                        }`}
+                                            }`}
                                     >
-                                        <div className={`p-2 rounded-full ${
-                                            item.disabled 
-                                                ? 'bg-gray-200' 
+                                        <div className={`p-2 rounded-full ${item.disabled
+                                                ? 'bg-gray-200'
                                                 : 'bg-blue-100'
-                                        }`}>
-                                            <IconComponent className={`w-5 h-5 ${
-                                                item.disabled 
-                                                    ? 'text-gray-400' 
+                                            }`}>
+                                            <IconComponent className={`w-5 h-5 ${item.disabled
+                                                    ? 'text-gray-400'
                                                     : 'text-blue-600'
-                                            }`} />
+                                                }`} />
                                         </div>
                                         <span className="font-medium">{item.label}</span>
                                     </button>

@@ -1,13 +1,13 @@
 import React from 'react';
 import { AlertTriangle, X, Check } from 'lucide-react';
 
-const ConfirmDialog = ({ 
-    isOpen, 
-    onClose, 
-    onConfirm, 
-    title, 
-    message, 
-    confirmText = 'Confirm', 
+const ConfirmDialog = ({
+    isOpen,
+    onClose,
+    onConfirm,
+    title,
+    message,
+    confirmText = 'Confirm',
     cancelText = 'Cancel',
     type = 'warning' // 'warning', 'danger', 'info'
 }) => {

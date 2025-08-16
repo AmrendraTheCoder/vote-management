@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { 
-    Edit, 
-    Trash2, 
-    ChevronUp, 
-    ChevronDown, 
-    ArrowUpDown, 
+import {
+    Edit,
+    Trash2,
+    ChevronUp,
+    ChevronDown,
+    ArrowUpDown,
     Building,
     Home,
     User,
@@ -14,15 +14,15 @@ import {
     UserMinus
 } from 'lucide-react';
 
-const StudentsTable = ({ 
-    students, 
-    onEdit, 
-    onDelete, 
-    onVoteChange, 
+const StudentsTable = ({
+    students,
+    onEdit,
+    onDelete,
+    onVoteChange,
     onMove,
-    sortField, 
-    sortDirection, 
-    onSort 
+    sortField,
+    sortDirection,
+    onSort
 }) => {
     const [movingStudent, setMovingStudent] = useState(null);
 
@@ -30,7 +30,7 @@ const StudentsTable = ({
         if (sortField !== field) {
             return <ArrowUpDown className="w-4 h-4 text-gray-400" />;
         }
-        return sortDirection === 'asc' 
+        return sortDirection === 'asc'
             ? <ChevronUp className="w-4 h-4 text-blue-600" />
             : <ChevronDown className="w-4 h-4 text-blue-600" />;
     };
@@ -82,7 +82,7 @@ const StudentsTable = ({
                             <th className="w-12 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 #
                             </th>
-                            <th 
+                            <th
                                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                                 onClick={() => onSort('name')}
                             >
@@ -92,7 +92,7 @@ const StudentsTable = ({
                                     {getSortIcon('name')}
                                 </div>
                             </th>
-                            <th 
+                            <th
                                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                                 onClick={() => onSort('roomNumber')}
                             >
@@ -102,7 +102,7 @@ const StudentsTable = ({
                                     {getSortIcon('roomNumber')}
                                 </div>
                             </th>
-                            <th 
+                            <th
                                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                                 onClick={() => onSort('hostel')}
                             >
@@ -112,7 +112,7 @@ const StudentsTable = ({
                                     {getSortIcon('hostel')}
                                 </div>
                             </th>
-                            <th 
+                            <th
                                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                                 onClick={() => onSort('vote')}
                             >
@@ -129,7 +129,7 @@ const StudentsTable = ({
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {students.map((student, index) => (
-                            <tr 
+                            <tr
                                 key={student._id}
                                 className="hover:bg-gray-50 transition-colors"
                             >
@@ -167,11 +167,10 @@ const StudentsTable = ({
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                        student.hostel === 'GH' 
-                                            ? 'bg-pink-100 text-pink-800' 
+                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${student.hostel === 'GH'
+                                            ? 'bg-pink-100 text-pink-800'
                                             : 'bg-blue-100 text-blue-800'
-                                    }`}>
+                                        }`}>
                                         {student.hostel}
                                     </span>
                                 </td>
