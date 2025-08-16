@@ -50,6 +50,21 @@ const StudentsTable = ({
         }
     };
 
+    const getRowBackground = (vote) => {
+        switch (vote) {
+            case 'Yes':
+                return 'bg-green-50 hover:bg-green-100';
+            case 'No':
+                return 'bg-red-50 hover:bg-red-100';
+            case 'Undecided':
+                return 'bg-yellow-50 hover:bg-yellow-100';
+            case 'Absent':
+                return 'bg-orange-50 hover:bg-orange-100';
+            default:
+                return 'bg-white hover:bg-gray-50';
+        }
+    };
+
     const handleMoveStudent = async (studentId, direction) => {
         setMovingStudent(studentId);
         try {
@@ -131,7 +146,7 @@ const StudentsTable = ({
                         {students.map((student, index) => (
                             <tr
                                 key={student._id}
-                                className="hover:bg-gray-50 transition-colors"
+                                className={`transition-colors ${getRowBackground(student.vote)}`}
                             >
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div className="flex items-center space-x-2">

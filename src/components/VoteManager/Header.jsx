@@ -95,7 +95,7 @@ const Header = ({
                         </div>
                         <div>
                             <h1 className="text-xl font-bold">Vote Manager</h1>
-                            <p className="text-xs text-gray-500">Student Support Tracker</p>
+                            {/* <p className="text-xs text-gray-500">Student Support Tracker</p> */}
                         </div>
                     </div>
 

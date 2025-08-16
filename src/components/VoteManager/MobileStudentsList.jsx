@@ -55,6 +55,21 @@ const MobileStudentCard = ({
         }
     };
 
+    const getCardBackground = (vote) => {
+        switch (vote) {
+            case 'Yes':
+                return 'bg-green-50 border-green-200';
+            case 'No':
+                return 'bg-red-50 border-red-200';
+            case 'Undecided':
+                return 'bg-yellow-50 border-yellow-200';
+            case 'Absent':
+                return 'bg-orange-50 border-orange-200';
+            default:
+                return 'bg-white border-gray-200';
+        }
+    };
+
     const handleVoteChange = async (newVote) => {
         setIsChangingVote(true);
         try {
@@ -74,7 +89,7 @@ const MobileStudentCard = ({
     };
 
     return (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 space-y-4">
+        <div className={`rounded-lg shadow-sm border p-4 space-y-4 ${getCardBackground(student.vote)}`}>
             {/* Header with position and move buttons */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">

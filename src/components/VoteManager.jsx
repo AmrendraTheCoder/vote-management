@@ -332,21 +332,21 @@ const VoteManager = () => {
                 {!loading && (
                     <div className="flex justify-between items-center">
                         <h2 className="text-2xl font-bold text-gray-900">Students Management</h2>
-                        <div className="flex space-x-3">
+                        <div className="flex space-x-2">
                             <button
                                 onClick={() => setShowExcelUpload(true)}
-                                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+                                className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
                             >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                 </svg>
                                 <span>Upload Excel</span>
                             </button>
                             <button
                                 onClick={handleAddStudent}
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
                             >
-                                <Plus className="w-5 h-5" />
+                                <Plus className="w-4 h-4" />
                                 <span>Add Student</span>
                             </button>
                         </div>
@@ -384,19 +384,19 @@ const VoteManager = () => {
                                     </div>
                                     <h3 className="text-lg font-medium text-gray-900 mb-2">No students found</h3>
                                     <p className="text-gray-600 mb-6">Get started by adding students individually or uploading an Excel file.</p>
-                                    <div className="flex justify-center space-x-4">
+                                    <div className="flex justify-center space-x-3">
                                         <button
                                             onClick={handleAddStudent}
-                                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+                                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
                                         >
-                                            <Plus className="w-5 h-5" />
+                                            <Plus className="w-4 h-4" />
                                             <span>Add Student</span>
                                         </button>
                                         <button
                                             onClick={() => setShowExcelUpload(true)}
-                                            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+                                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
                                         >
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                             </svg>
                                             <span>Upload Excel</span>
