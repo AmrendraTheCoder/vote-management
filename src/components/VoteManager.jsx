@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Download, Trash2, Users, CheckCircle, XCircle, Clock, UserX, Wifi, WifiOff, RefreshCw } from 'lucide-react';
+import { Plus, Download, Trash2, Users, CheckCircle, XCircle, Clock, UserX, Wifi, WifiOff, RefreshCw, Lock, LogOut, Eye, EyeOff } from 'lucide-react';
 import ApiService from '../services/api.js';
 
 const VoteManager = () => {
@@ -9,9 +9,32 @@ const VoteManager = () => {
     const [isOnline, setIsOnline] = useState(navigator.onLine);
     const [error, setError] = useState(null);
     const [syncing, setSyncing] = useState(false);
+    
+    // Authentication states
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [loginId, setLoginId] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [loginError, setLoginError] = useState('');
+    const [loginLoading, setLoginLoading] = useState(false);
+
+    // Hardcoded credentials (in production, this should be handled by backend)
+    const validCredentials = {
+        'admin': 'admin123',
+        'chirag': 'chirag@vote2024',
+        'manager': 'vote_manager_2024',
+        'coordinator': 'coordinator@123'
+    };
 
     useEffect(() => {
-        loadStudents();
+        // Check if user is already authenticated
+        const authStatus = localStorage.getItem('voteManagerAuth');
+        if (authStatus === 'true') {
+            setIsAuthenticated(true);
+            loadStudents();
+        } else {
+            setLoading(false);
+        }
 
         // Listen for online/offline events
         const handleOnline = () => setIsOnline(true);
@@ -24,7 +47,38 @@ const VoteManager = () => {
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('offline', handleOffline);
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setLoginLoading(true);
+        setLoginError('');
+
+        // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        if (validCredentials[loginId] && validCredentials[loginId] === password) {
+            setIsAuthenticated(true);
+            localStorage.setItem('voteManagerAuth', 'true');
+            localStorage.setItem('voteManagerUser', loginId);
+            loadStudents();
+        } else {
+            setLoginError('Invalid ID or password. Please try again.');
+        }
+
+        setLoginLoading(false);
+    };
+
+    const handleLogout = () => {
+        setIsAuthenticated(false);
+        localStorage.removeItem('voteManagerAuth');
+        localStorage.removeItem('voteManagerUser');
+        setLoginId('');
+        setPassword('');
+        setStudents([]);
+        setStats({ total: 0, forChirag: 0, againstChirag: 0, undecided: 0, absent: 0, notAsked: 0 });
+    };
 
     const loadStudents = async () => {
         try {
@@ -229,6 +283,97 @@ const VoteManager = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-2 sm:p-4">
+            {/* Authentication Overlay */}
+            {!isAuthenticated && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md mx-4">
+                        <div className="text-center mb-8">
+                            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-lg mb-4">
+                                <Lock className="w-8 h-8 mx-auto mb-2" />
+                                <h1 className="text-xl font-bold">Vote Management Access</h1>
+                                <p className="text-blue-100 text-sm">Secure Authentication Required</p>
+                            </div>
+                        </div>
+
+                        <form onSubmit={handleLogin} className="space-y-6">
+                            {loginError && (
+                                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                                    <div className="flex items-center space-x-2">
+                                        <XCircle className="w-5 h-5 text-red-600" />
+                                        <span className="text-red-800 text-sm">{loginError}</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    User ID
+                                </label>
+                                <input
+                                    type="text"
+                                    value={loginId}
+                                    onChange={(e) => setLoginId(e.target.value)}
+                                    placeholder="Enter your ID"
+                                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    required
+                                    disabled={loginLoading}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Password
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="Enter your password"
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-12"
+                                        required
+                                        disabled={loginLoading}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                        disabled={loginLoading}
+                                    >
+                                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={loginLoading || !loginId || !password}
+                                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all duration-300"
+                            >
+                                {loginLoading ? (
+                                    <div className="flex items-center justify-center space-x-2">
+                                        <RefreshCw className="w-5 h-5 animate-spin" />
+                                        <span>Authenticating...</span>
+                                    </div>
+                                ) : (
+                                    'Access Dashboard'
+                                )}
+                            </button>
+                        </form>
+
+                        <div className="mt-6 text-center">
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                <h4 className="font-medium text-blue-800 mb-2 text-sm">Demo Credentials:</h4>
+                                <div className="text-xs text-blue-700 space-y-1">
+                                    <div>ID: <span className="font-mono bg-blue-100 px-1 rounded">admin</span> | Password: <span className="font-mono bg-blue-100 px-1 rounded">admin123</span></div>
+                                    <div>ID: <span className="font-mono bg-blue-100 px-1 rounded">chirag</span> | Password: <span className="font-mono bg-blue-100 px-1 rounded">chirag@vote2024</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="max-w-6xl mx-auto">
 
                 {/* Connection Status & Error Messages */}
@@ -251,30 +396,48 @@ const VoteManager = () => {
                                     <p className="text-blue-100 text-sm">Track Support for Chirag Sir</p>
                                 </div>
 
-                                {/* Connection Status */}
-                                <div className="flex items-center space-x-2">
-                                    {isOnline ? (
-                                        <div className="flex items-center space-x-1">
-                                            <Wifi className="w-4 h-4 text-green-300" />
-                                            <span className="text-xs text-green-300">Online</span>
+                                {/* Connection Status & User Info */}
+                                <div className="flex items-center space-x-3">
+                                    {/* User Info */}
+                                    <div className="flex items-center space-x-2">
+                                        <div className="text-right">
+                                            <div className="text-xs text-blue-200">Logged in as</div>
+                                            <div className="text-sm font-medium text-white">{localStorage.getItem('voteManagerUser') || 'User'}</div>
                                         </div>
-                                    ) : (
-                                        <div className="flex items-center space-x-1">
-                                            <WifiOff className="w-4 h-4 text-red-300" />
-                                            <span className="text-xs text-red-300">Offline</span>
-                                        </div>
-                                    )}
-
-                                    {isOnline && (
                                         <button
-                                            onClick={syncData}
-                                            disabled={syncing || loading}
-                                            className="p-1 hover:bg-white hover:bg-opacity-20 rounded transition-colors"
-                                            title="Refresh Data"
+                                            onClick={handleLogout}
+                                            className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
+                                            title="Logout"
                                         >
-                                            <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+                                            <LogOut className="w-4 h-4" />
                                         </button>
-                                    )}
+                                    </div>
+
+                                    {/* Connection Status */}
+                                    <div className="flex items-center space-x-2">
+                                        {isOnline ? (
+                                            <div className="flex items-center space-x-1">
+                                                <Wifi className="w-4 h-4 text-green-300" />
+                                                <span className="text-xs text-green-300">Online</span>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center space-x-1">
+                                                <WifiOff className="w-4 h-4 text-red-300" />
+                                                <span className="text-xs text-red-300">Offline</span>
+                                            </div>
+                                        )}
+
+                                        {isOnline && (
+                                            <button
+                                                onClick={syncData}
+                                                disabled={syncing || loading}
+                                                className="p-1 hover:bg-white hover:bg-opacity-20 rounded transition-colors"
+                                                title="Refresh Data"
+                                            >
+                                                <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
