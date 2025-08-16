@@ -173,7 +173,7 @@ const ExcelUpload = ({ isOpen, onUpload, onClose }) => {
     const handleConfirmUpload = async () => {
         if (uploadResult && uploadResult.success && uploadResult.data) {
             await onUpload(uploadResult.data);
-            onClose();
+            handleClose();
         }
     };
 
@@ -187,11 +187,11 @@ const ExcelUpload = ({ isOpen, onUpload, onClose }) => {
     };
 
     return (
-        <div 
+        <div
             className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
             onClick={handleClose}
         >
-            <div 
+            <div
                 className="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 animate-in fade-in-0 zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto"
                 onClick={(e) => e.stopPropagation()}
             >
@@ -229,8 +229,8 @@ const ExcelUpload = ({ isOpen, onUpload, onClose }) => {
                     {/* Upload Area */}
                     <div
                         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${dragActive
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-gray-300 hover:border-gray-400'
+                            ? 'border-blue-500 bg-blue-50'
+                            : 'border-gray-300 hover:border-gray-400'
                             }`}
                         onDragEnter={handleDrag}
                         onDragLeave={handleDrag}

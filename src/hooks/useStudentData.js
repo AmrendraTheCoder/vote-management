@@ -2,6 +2,11 @@ import { useState, useEffect } from "react";
 import ApiService from "../services/api.js";
 
 const useStudentData = (isAuthenticated = false) => {
+  console.log(
+    "useStudentData hook initialized with isAuthenticated:",
+    isAuthenticated
+  );
+
   const [students, setStudents] = useState([]);
   const [stats, setStats] = useState({
     total: 0,
@@ -11,7 +16,7 @@ const useStudentData = (isAuthenticated = false) => {
     absent: 0,
     notAsked: 0,
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(isAuthenticated); // Only start loading if authenticated
   const [error, setError] = useState(null);
   const [syncing, setSyncing] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -57,16 +62,15 @@ const useStudentData = (isAuthenticated = false) => {
 
       // Use the bulk API endpoint for better performance
       const response = await ApiService.createBulkStudents(studentsData);
-      
+
       if (response.success) {
         // Refresh the full list after successful bulk addition
         await loadStudents(true);
       } else {
-        throw new Error(response.message || 'Failed to add students in bulk');
+        throw new Error(response.message || "Failed to add students in bulk");
       }
-
     } catch (error) {
-      console.error('Error in bulk add:', error);
+      console.error("Error in bulk add:", error);
       throw error;
     } finally {
       setSyncing(false);
@@ -85,6 +89,8 @@ const useStudentData = (isAuthenticated = false) => {
   };
 
   const loadStudents = async (forceRefresh = false) => {
+    console.log("loadStudents called:", { forceRefresh, isOnline, loading });
+
     // Check cache first (unless force refresh)
     const now = Date.now();
     if (
@@ -99,18 +105,26 @@ const useStudentData = (isAuthenticated = false) => {
 
     try {
       setError(null);
+      console.log("Starting student load, setting loading to true");
+      setLoading(true);
 
       if (isOnline) {
         console.log("Fetching students from API...");
         const response = await ApiService.getStudents();
 
         if (response.success && response.data) {
+          console.log(
+            "API response successful:",
+            response.data.length,
+            "students"
+          );
           setStudents(response.data);
           updateStatsLocal(response.data);
           saveToLocalStorage(response.data);
           setLastFetch(now);
           console.log(`Loaded ${response.data.length} students from API`);
         } else {
+          console.log("API response not successful or no data:", response);
           throw new Error(response.message || "Failed to fetch students");
         }
       } else {
@@ -125,15 +139,24 @@ const useStudentData = (isAuthenticated = false) => {
     } catch (error) {
       console.error("Error loading students:", error);
       setError("Failed to load students. Using cached data if available.");
+      setLoading(false);
 
       // Fallback to cached data
       const cachedData = localStorage.getItem("voteManagerStudents");
       if (cachedData) {
-        const parsedData = JSON.parse(cachedData);
-        setStudents(parsedData);
-        updateStatsLocal(parsedData);
+        try {
+          const parsedData = JSON.parse(cachedData);
+          console.log("Using cached data:", parsedData.length, "students");
+          setStudents(parsedData);
+          updateStatsLocal(parsedData);
+        } catch (parseError) {
+          console.error("Error parsing cached data:", parseError);
+        }
+      } else {
+        console.log("No cached data available");
       }
     } finally {
+      console.log("loadStudents finally block, setting loading to false");
       setLoading(false);
     }
   };
@@ -280,9 +303,20 @@ const useStudentData = (isAuthenticated = false) => {
 
   // Load students when authenticated
   useEffect(() => {
+    console.log("useStudentData authentication effect:", {
+      isAuthenticated,
+      loading,
+      studentsLength: students.length,
+    });
+
     if (isAuthenticated) {
+      console.log("Loading students due to authentication...");
+      setLoading(true);
       loadStudents();
     } else {
+      console.log("Not authenticated, setting loading to false");
+      setStudents([]);
+      setError(null);
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
