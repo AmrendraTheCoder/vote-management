@@ -46,8 +46,12 @@ git push -u origin main
 1. Go to [vercel.com](https://vercel.com)
 2. Sign in with GitHub account
 3. Click "New Project"
-4. Import your GitHub repository
+4. Import your GitHub repository: `https://github.com/AmrendraTheCoder/vote-management`
 5. **Important**: Set root directory to `backend/`
+6. **Framework Preset**: Other (or leave as detected)
+7. **Build Command**: Leave empty or `echo "No build required"`
+8. **Output Directory**: Leave empty
+9. **Install Command**: `npm install`
 
 ### 2. Configure Environment Variables
 
