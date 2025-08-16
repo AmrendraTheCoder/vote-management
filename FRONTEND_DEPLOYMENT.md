@@ -3,6 +3,7 @@
 ## 🚀 Deploy Frontend to Vercel
 
 ### Prerequisites
+
 - Backend already deployed and URL obtained
 - GitHub repository ready
 
@@ -11,12 +12,14 @@
 **Get your backend URL first**, then update these files:
 
 #### For Development (.env)
+
 ```env
 VITE_API_URL=http://localhost:5001/api
 VITE_NODE_ENV=development
 ```
 
 #### For Production (.env.production)
+
 ```env
 VITE_API_URL=https://your-actual-backend-url.vercel.app/api
 VITE_NODE_ENV=production
@@ -49,6 +52,7 @@ VITE_NODE_ENV = production
 ## 🔧 Post-Deployment Steps
 
 ### Update Backend CORS
+
 1. **Copy your frontend URL** (e.g., `https://vote-management-abc123.vercel.app`)
 2. **Update backend environment variable** in Vercel:
    ```
@@ -71,20 +75,24 @@ VITE_NODE_ENV = production
 ### Common Issues
 
 **CORS Errors:**
+
 - Check backend `FRONTEND_URL` environment variable
 - Verify frontend URL is correct in backend settings
 
 **API Not Working:**
+
 - Check `VITE_API_URL` in frontend environment variables
 - Test backend health endpoint: `https://your-backend.vercel.app/api/health`
 
 **Build Failures:**
+
 - Check all dependencies are in `package.json`
 - Verify no import errors in components
 
 ## 📱 Mobile Testing
 
 After deployment, test on:
+
 - [ ] iPhone Safari
 - [ ] Android Chrome
 - [ ] Desktop Chrome

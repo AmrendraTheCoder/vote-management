@@ -6,42 +6,52 @@ class ApiService {
     this.baseURL = API_BASE_URL;
   }
 
-  async makeRequest(endpoint, options = {}) {
-    const url = `${this.baseURL}${endpoint}`;
+    async makeRequest(endpoint, options = {}) {
+        const url = `${this.baseURL}${endpoint}`;
+        
+        try {
+            console.log(`Making request to: ${url}`);
+            console.log('Request options:', options);
+            
+            const response = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                },
+                ...options
+            });
 
-    const defaultOptions = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
 
-    const requestOptions = {
-      ...defaultOptions,
-      ...options,
-      headers: {
-        ...defaultOptions.headers,
-        ...options.headers,
-      },
-    };
+            // Try to get response text first
+            const responseText = await response.text();
+            console.log('Raw response:', responseText);
 
-    try {
-      const response = await fetch(url, requestOptions);
-      const data = await response.json();
+            let data;
+            try {
+                data = JSON.parse(responseText);
+            } catch (parseError) {
+                console.error('JSON parse error:', parseError);
+                throw new Error(`Invalid JSON response: ${responseText.substring(0, 100)}...`);
+            }
 
-      if (!response.ok) {
-        throw new Error(
-          data.message || `HTTP error! status: ${response.status}`
-        );
-      }
+            console.log('Parsed response data:', data);
 
-      return data;
-    } catch (error) {
-      console.error("API request failed:", error);
-      throw error;
-    }
-  }
+            if (!response.ok) {
+                throw new Error(data.message || data.error || `HTTP error! status: ${response.status}`);
+            }
 
-  // Student API methods
+            return { success: true, data };
+        } catch (error) {
+            console.error('API request failed:', error);
+            return { 
+                success: false, 
+                error: error.message,
+                message: error.message
+            };
+        }
+    }  // Student API methods
   async getStudents() {
     return this.makeRequest("/students");
   }
