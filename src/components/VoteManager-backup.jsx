@@ -33,11 +33,9 @@ const VoteManager = () => {
 
     // Hardcoded credentials (in production, this should be handled by backend)
     const validCredentials = {
-        'admin': 'admin123',
         'chirag': 'chirag@vote2024',
         'manager': 'vote_manager_2024',
         'coordinator': 'coordinator@123',
-        'viva24': 'viva_city'
     };
 
     // Debounce timer for API calls

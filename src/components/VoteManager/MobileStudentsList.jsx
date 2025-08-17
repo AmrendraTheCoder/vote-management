@@ -168,10 +168,10 @@ const MobileStudentCard = ({
             <div className="border-t border-gray-200 pt-4">
                 <div className="flex items-center space-x-3">
                     <div className={`p-2 rounded-lg ${student.vote === 'Yes' ? 'bg-green-100' :
-                            student.vote === 'No' ? 'bg-red-100' :
-                                student.vote === 'Undecided' ? 'bg-yellow-100' :
-                                    student.vote === 'Absent' ? 'bg-orange-100' :
-                                        'bg-gray-100'
+                        student.vote === 'No' ? 'bg-red-100' :
+                            student.vote === 'Undecided' ? 'bg-yellow-100' :
+                                student.vote === 'Absent' ? 'bg-orange-100' :
+                                    'bg-gray-100'
                         }`}>
                         {getVoteIcon(student.vote)}
                     </div>
